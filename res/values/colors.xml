@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="scan_start_color">#00FFFFFF</color>
+    <color name="scan_end_color">#20FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="transparent">#00000000</color>
+    <color name="gray">#C0C0C0</color>
+
+</resources>

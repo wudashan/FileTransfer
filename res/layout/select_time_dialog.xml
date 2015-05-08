@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+   	<LinearLayout 
+   	    android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal"
+    	android:gravity="center"
+    	android:padding="5dp">
+   	    <TextView 
+   	        android:layout_width="wrap_content"
+   	        android:layout_height="wrap_content"
+   	        android:text="@string/set_visible_time"
+   	        android:textSize="20dp"
+   	        android:textColor="#FFFFFF"/>
+   	    <Spinner 
+   	        android:id="@+id/selectTimeSpinner"
+   	        android:layout_width="wrap_content"
+   	        android:layout_height="wrap_content"/>
+   	    <TextView 
+   	        android:layout_width="wrap_content"
+   	        android:layout_height="wrap_content"
+   	        android:text="@string/second"
+   	        android:textSize="20dp"
+   	        android:textColor="#FFFFFF"/>
+   	</LinearLayout>
+   	<LinearLayout 
+   	    android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:background="#C0C0C0"
+	    android:padding="2dp"
+    	android:orientation="horizontal">
+   	    <Button
+            android:id="@+id/selectTimeEnsureBtn"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/ensure" />
+       	<Button 
+       	    android:id="@+id/selectTimeCancelBtn"
+       	    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="1"
+		    android:text="@string/cancel"/>
+   	</LinearLayout>
+</LinearLayout>
