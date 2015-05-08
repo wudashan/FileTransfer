@@ -33,6 +33,7 @@ public class DownloadTask {
 	private FileInfoDAO fileInfoDAO = null;
 	public boolean isPause = false;
 	private AESUtil aesUtil;
+	public DownloadThread downloadThread;
 	
 	public void Pause(){
 		isPause = true;
@@ -52,8 +53,11 @@ public class DownloadTask {
 	
 	public void download(){
 		//创建下载进程
-		new DownloadThread().start();
+		downloadThread = new DownloadThread();
+		downloadThread.start();
 	}
+	
+	
 	
 	
 	/**
@@ -63,17 +67,54 @@ public class DownloadTask {
 	 */
 	class DownloadThread extends Thread{
 		
+		//SOCKET连接需要的类
+		Socket socket = null;
+		RandomAccessFile raf = null;
+		DataInputStream dis = null;
+		DataOutputStream dos=null;
+		
 		public DownloadThread() {
 			super();
 		}
 		
+		/**
+		 * 当Service被强制关闭时，启动该方法，结束所有连接
+		 */
+		public void onDestroySocketConnection(){
+			if (socket != null) {
+				try {
+					socket.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (dos != null) {
+				try {
+					dos.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (dis != null) {
+				try {
+					dis.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+			if (raf != null) {
+				try {
+					raf.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		
 		public void run(){
 			
-			//SOCKET连接需要的类
-			Socket socket = null;
-			RandomAccessFile raf = null;
-			DataInputStream dis = null;
-			DataOutputStream dos=null;
 			
 			try {
 				socket = new Socket(fileInfo.getIP(),fileInfo.getPort());

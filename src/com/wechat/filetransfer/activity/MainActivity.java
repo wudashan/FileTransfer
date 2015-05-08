@@ -108,7 +108,7 @@ public class MainActivity extends FragmentActivity implements
 			if (fileInfo.getStatus().equals("已完成") || fileInfo.getStatus().equals("停止下载")) {
 				continue;
 			}else {
-				Toast.makeText(this, "请暂停完所有任务再退出！", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, "请暂停完所有任务再退出！", Toast.LENGTH_SHORT).show();
 				isAllPause = false;
 				break;
 			}

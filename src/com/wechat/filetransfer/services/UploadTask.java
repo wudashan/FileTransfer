@@ -29,6 +29,7 @@ public class UploadTask {
 	private String filePath;
 	private boolean isPause;
 	private AESUtil aesUtil;
+	public UploadThread uploadThread;
 	
 	public void Pause(){
 		isPause = true;
@@ -48,7 +49,8 @@ public class UploadTask {
 	
 	public void upload(){
 		//创建下载进程
-		new UploadThread().start();
+		uploadThread = new UploadThread();
+		uploadThread.start();
 	}
 	
 	
@@ -57,20 +59,69 @@ public class UploadTask {
 	 * @author Wise
 	 *
 	 */
-	class UploadThread extends Thread{
+	 class UploadThread extends Thread{
+		
+		//SOCKET连接需要的类
+		Socket socket = null;
+		DataOutputStream dos=null;
+		DataInputStream dis = null;
+		DataInputStream disClient = null;
+		RandomAccessFile raf = null;
+		ServerSocket ss=null;
+		
+		/**
+		 * 当Service被强制关闭时，启动该方法，结束所有连接
+		 */
+		public void onDestroySocketConnection(){
+			if (socket != null) {
+				try {
+					socket.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (dos != null) {
+				try {
+					dos.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (dis != null) {
+				try {
+					dis.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (disClient != null) {
+				try {
+					disClient.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (raf != null) {
+				try {
+					raf.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (ss != null) {
+				try {
+					ss.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		
 		public UploadThread() {
 			super();
 		}
 		
 		public void run(){
-			//SOCKET连接需要的类
-			Socket socket = null;
-			DataOutputStream dos=null;
-			DataInputStream dis = null;
-			DataInputStream disClient = null;
-			RandomAccessFile raf = null;
-			ServerSocket ss=null;
 			try {
 				File file=new File(filePath);
 				ss=new ServerSocket(fileInfo.getPort());
