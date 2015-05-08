@@ -48,7 +48,7 @@ public class ScanActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		MainActivity.server.setContext(this);
 		int flag = WindowManager.LayoutParams.FLAG_FULLSCREEN;
-		Window window = ScanActivity.this.getWindow();
+		Window window = this.getWindow();
 		window.setFlags(flag, flag);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.scan_activity);

@@ -8,15 +8,12 @@ import com.wechat.filetransfer.bean.FileInfo;
 import com.wechat.filetransfer.db.FileInfoDAO;
 import com.wechat.filetransfer.db.FileInfoDAOImpl;
 import com.wechat.filetransfer.services.SocketServer;
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
@@ -44,7 +41,7 @@ public class MainActivity extends FragmentActivity implements
 		initView();
 		initDatas();
 		initEvent();
-		server = new SocketServer();
+		server = SocketServer.getInstance();
 		new Thread() {
 			public void run() {
 				server.beginListen();
@@ -129,7 +126,6 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	protected void onDestroy() {
 		pageLoad.unregisterReceiver();
-		server.stopListen();
 		super.onDestroy();
 	}
 

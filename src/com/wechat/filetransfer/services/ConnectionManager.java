@@ -37,11 +37,12 @@ public class ConnectionManager {
 	/**
 	 * 线程池最大数量
 	 */
-	private final int Max_Thread_Num = 5;
+	private final static int Max_Thread_Num = 5;
 
 	public static ConnectionManager getInstance(Context context) {
 		if (connectionManager == null)
 			connectionManager = new ConnectionManager(context);
+		scheduledThreadPool = Executors.newScheduledThreadPool(Max_Thread_Num);
 		ipAddress = getLocalAddress();
 		return connectionManager;
 	}
@@ -50,7 +51,6 @@ public class ConnectionManager {
 		// TODO Auto-generated constructor stub
 		this.context = context;
 		locationManager = new LocationManager(context);
-		scheduledThreadPool = Executors.newScheduledThreadPool(Max_Thread_Num);
 	}
 
 	public static int SERVERPORT = 8878;

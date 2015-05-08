@@ -28,5 +28,12 @@
     <string name="set_visible">设置可见</string>
     <string name="set_visible_time">设置可见时间:</string>
     <string name="second">秒</string>
+    
+    <string name="people_closed">附近的人</string>
+    <string name="start_send">开始发送</string>
+    <string name="file_to_send">待发送文件</string>
+    <string name="list_send">发送列表</string>
+    <string name="user_to_send">发送对象</string>
+    <string name="list_is_empty">传输列表为空</string>
 
 </resources>

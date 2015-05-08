@@ -18,13 +18,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class PageSend extends Fragment implements OnClickListener {
 
-	private Button searchFriend, showFile, startSend;
+	private LinearLayout searchFriend, showFile, startSend;
 	private TextView userToSend, fileToSend;
 	private String fileName, filePath;
 	private List<FileInfo> listSend = null;
@@ -40,9 +41,9 @@ public class PageSend extends Fragment implements OnClickListener {
 
 		fileToSend = (TextView) view.findViewById(R.id.fileToSend);
 		userToSend = (TextView) view.findViewById(R.id.userToSend);
-		startSend = (Button) view.findViewById(R.id.startSend);
-		showFile = (Button) view.findViewById(R.id.showFile);
-		searchFriend = (Button) view.findViewById(R.id.searchFriend);
+		startSend =  (LinearLayout) view.findViewById(R.id.startSend);
+		showFile = (LinearLayout) view.findViewById(R.id.showFile);
+		searchFriend = (LinearLayout) view.findViewById(R.id.searchFriend);
 		searchFriend.setOnClickListener(this);
 		showFile.setOnClickListener(this);
 		startSend.setOnClickListener(this);
@@ -96,7 +97,7 @@ public class PageSend extends Fragment implements OnClickListener {
 				i.putExtra("filePath", filePath);
 				i.putExtra("fileInfo", fileInfo);
 				getActivity().startService(i);
-				fileToSend.setText("发送文件：" + fileName);
+				fileToSend.setText(fileName);
 
 			}
 			break;
@@ -112,18 +113,17 @@ public class PageSend extends Fragment implements OnClickListener {
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.e("PageSend", requestCode+" "+resultCode);
 		super.onActivityResult(requestCode, resultCode, data);
 		switch (resultCode) {
 		case 1:
 			fileName = data.getStringExtra("fileName");
 			filePath = data.getStringExtra("filePath");
-			fileToSend.setText("发送文件：" + fileName);
+			fileToSend.setText(fileName);
 			break;
 		case 2:
 			Bundle bunde = data.getExtras();
 			sendip = bunde.getString("ip");
-			userToSend.setText("发送對象：" + sendip);
+			userToSend.setText(sendip);
 			break;
 		default:
 			break;

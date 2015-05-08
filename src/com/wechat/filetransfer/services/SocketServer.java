@@ -76,7 +76,13 @@ public class SocketServer {
 		};
 	};
 
-	public SocketServer() {
+	private static SocketServer socketServer;
+	public static SocketServer getInstance(){
+		if(socketServer == null)
+			socketServer = new SocketServer();
+		return socketServer;
+	}
+	private SocketServer() {
 		try {
 			server = new ServerSocket(ConnectionManager.SERVERPORT);
 		} catch (IOException e) {
@@ -272,8 +278,7 @@ public class SocketServer {
 
 	public void stopListen() {
 		flag = false;
-		if (!clientSet.isEmpty())
-			clientSet.clear();
+		clear();
 	}
 
 	public void beginListen() {

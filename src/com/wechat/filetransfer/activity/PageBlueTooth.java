@@ -35,6 +35,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,23 +64,24 @@ public class PageBlueTooth extends Fragment {
 	
 	ListView mDeviceListView;
 	TextView mSendFileNameTV;
-	Button mSetVisibleBtn;
-	Button mSearchDeviceBtn;
-	Button mSelectFileBtn;
+	TextView mSearchBtnText;
+	LinearLayout mSetVisibleBtn;
+	LinearLayout mSearchDeviceBtn;
+	LinearLayout mSelectFileBtn;
 	
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
-		View view = inflater.inflate(R.layout.bluetooth_main, container, false);
+		View view = inflater.inflate(R.layout.page_bluetooth, container, false);
 		
 		mDeviceListView = (ListView) view.findViewById(R.id.deviceListView);
-		mSetVisibleBtn = (Button) view.findViewById(R.id.setDeviceVisibleBtn);
-		mSearchDeviceBtn = (Button) view.findViewById(R.id.searchDeviceBtn);
-		mSelectFileBtn = (Button) view.findViewById(R.id.cancelSearchBtn);
+		mSetVisibleBtn = (LinearLayout) view.findViewById(R.id.setDeviceVisibleBtn);
+		mSearchDeviceBtn = (LinearLayout) view.findViewById(R.id.searchDeviceBtn);
+		mSelectFileBtn = (LinearLayout) view.findViewById(R.id.cancelSearchBtn);
 		mSendFileNameTV = (TextView) view.findViewById(R.id.sendFileTV);
-		
+		mSearchBtnText = (TextView) view.findViewById(R.id.searchBtnText);
 		
 		mApplication = BluetoothApplication.getInstance();
 		mTouchObject = mApplication.getTouchObject();
@@ -254,7 +256,7 @@ public class PageBlueTooth extends Fragment {
 	 * 改变按钮显示文字
 	 */
 	public void changeSearchBtnText() {
-		mSearchDeviceBtn.setText("重新搜索");
+		mSearchBtnText.setText("重新搜索");
 	}
 	
 }

@@ -24,6 +24,13 @@ public class DownloadService extends Service{
 		return null;
 	}
 	
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+	}
+	
+	
 	//Æô¶¯Service
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {

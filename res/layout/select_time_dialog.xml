@@ -13,8 +13,7 @@
    	        android:layout_width="wrap_content"
    	        android:layout_height="wrap_content"
    	        android:text="@string/set_visible_time"
-   	        android:textSize="20dp"
-   	        android:textColor="#FFFFFF"/>
+   	        android:textSize="20dp"/>
    	    <Spinner 
    	        android:id="@+id/selectTimeSpinner"
    	        android:layout_width="wrap_content"
@@ -23,8 +22,7 @@
    	        android:layout_width="wrap_content"
    	        android:layout_height="wrap_content"
    	        android:text="@string/second"
-   	        android:textSize="20dp"
-   	        android:textColor="#FFFFFF"/>
+   	        android:textSize="20dp"/>
    	</LinearLayout>
    	<LinearLayout 
    	    android:layout_width="fill_parent"

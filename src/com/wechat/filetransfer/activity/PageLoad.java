@@ -21,7 +21,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class PageLoad extends Fragment {
 
@@ -29,13 +31,28 @@ public class PageLoad extends Fragment {
 	private static ReceiveAdapter adapter = null;
 	private static FileInfoDAO fileInfoDAO = null;
 	private ListView lv_main = null;
+	private static   ImageView bg_imageView;
+	private static   TextView bg_textView;
+	private static int flag = 0;
 	private IntentFilter filter = null;
 
 	private static Handler handler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
-			adapter.notifyDataSetChanged();
+			switch (msg.what) {
+			case 0:
+				adapter.notifyDataSetChanged();
+				break;
+			case 1:
+				bg_imageView.setVisibility(View.GONE);
+				bg_textView.setVisibility(View.GONE);
+				break;
+			default:
+				break;
+			}
 		};
 	};
+	
+	
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,9 +60,15 @@ public class PageLoad extends Fragment {
 		View view = inflater.inflate(R.layout.page_load, container, false);
 		// 先从数据库里获取文件信息集合，包括未下载完的和已下载完的
 		fileInfoDAO = new FileInfoDAOImpl(getActivity());
-
+		bg_imageView = (ImageView) view.findViewById(R.id.bg_imageView);
+		bg_textView = (TextView) view.findViewById(R.id.bg_textView);
 		list = new ArrayList<FileInfo>();
 		list.addAll(fileInfoDAO.getAllFileInfos());
+		//若有文件记录，则设置图片不可见
+		if (!list.isEmpty()) {
+			bg_imageView.setVisibility(View.GONE);
+			bg_textView.setVisibility(View.GONE);
+		}
 		// 将文件信息集合发送给adapter
 		lv_main = (ListView) view.findViewById(R.id.lv_main);
 		adapter = new ReceiveAdapter(getActivity(), list, R.layout.item_load,
@@ -55,24 +78,41 @@ public class PageLoad extends Fragment {
 		filter = new IntentFilter();
 		filter.addAction(DownloadService.ACTION_UPDATE);
 		getActivity().registerReceiver(receiver, filter);
+		
+		
+		
 		return view;
 	}
+	
+	
+	
+	
 
 	public void unregisterReceiver() {
 		getActivity().unregisterReceiver(receiver);
 	}
 
 	public static void ReceiveFileFromSender(FileInfo fileInfo) {
+		
+		Message message1 = new Message();
+		message1.what = 1;
+		handler.sendMessage(message1);
+		
+		
 		// 若文件存在，且未下完，则进行断点续传，而不添加load_item
 		if (fileInfoDAO.isExists(fileInfo.getIP(), fileInfo.getPort(),
 				fileInfo.getFileName())) {
 			fileInfoDAO.updateFileInfo(fileInfo.getIP(), fileInfo.getPort(),
 					fileInfo.getFileName(), "继续下载");
-			handler.sendMessage(new Message());
+			Message message = new Message();
+			message.what = 0;
+			handler.sendMessage(message);
 		} else {
 			// 若文件不存在，则新添一个load_item进行下载。
 			list.add(fileInfo);
-			handler.sendMessage(new Message());
+			Message message = new Message();
+			message.what = 0;
+			handler.sendMessage(message);
 		}
 	}
 
