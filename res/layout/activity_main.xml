@@ -1,0 +1,57 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:hyman="http://schemas.android.com/apk/res/com.scut.filetransfer"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+    </android.support.v4.view.ViewPager>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/content_bg"
+        android:orientation="horizontal" >
+
+        <com.scut.filetransfer.activity.ChangeColorIconWithText
+            android:id="@+id/send"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:padding="5dp"
+            hyman:icon="@drawable/ic_menu_start_conversation"
+            hyman:text="@string/send"
+            hyman:text_size="12sp"
+            hyman:color="#ff45c01a" />
+
+        <com.scut.filetransfer.activity.ChangeColorIconWithText
+            android:id="@+id/load"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:padding="5dp"
+            hyman:icon="@drawable/ic_menu_friendslist"
+            hyman:text="@string/receive"
+            hyman:text_size="12sp"
+            hyman:color="#ff45c01a" />
+        
+        <com.scut.filetransfer.activity.ChangeColorIconWithText
+            android:id="@+id/blueTooth"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:padding="5dp"
+            hyman:icon="@drawable/ic_menu_send"
+            hyman:text="@string/bluetooth"
+            hyman:text_size="12sp"
+            hyman:color="#ff45c01a" />
+        
+
+    </LinearLayout>
+
+</LinearLayout>

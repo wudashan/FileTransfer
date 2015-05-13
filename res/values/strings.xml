@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">微传</string>
+    
+    <string name="send">发送</string>
+    <string name="receive">接收</string>
+    <string name="bluetooth">蓝牙</string>
+    
+    <string name="exit">退出</string>
+    <string name="no_wifi">请连接到无线网络</string>
+    <string name="comfirm">确定</string>
+    <string name="cancel">取消</string>
+    <string name="ip_ddress">IP地址：</string>
+    <string name="distance">距离：</string>
+    <string name="check_code">验证码：</string>
+    <string name="wrong_check_code">请输入四位的验证码</string>
+    <string name="input_check_code">请输入验证码</string>
+    <string name="device_list">设备列表</string>
+    <string name="search_device">搜索设备</string>
+    <string name="send_file">发送文件</string>
+    <string name="device_name">设备名</string>
+    <string name="is_pair">是否配对</string>
+    <string name="mac_address">MAC地址：</string>
+    <string name="address_str">address</string>
+    <string name="select_file">选择文件</string>
+    <string name="send_file1">发送文件：</string>
+    <string name="null_name">null</string>
+    <string name="ensure">确定</string>
+    
+    <string name="back">返回</string>
+    <string name="set_visible">设置可见</string>
+    <string name="set_visible_time">设置可见时间:</string>
+    <string name="second">秒</string>
+    <string name="people_closed">附近的人</string>
+    <string name="start_send">开始发送</string>
+    <string name="file_to_send">待发送文件</string>
+    <string name="list_send">发送列表</string>
+    <string name="user_to_send">发送对象</string>
+    <string name="list_is_empty">传输列表为空</string>
+
+</resources>
