@@ -62,6 +62,7 @@ public class UploadTask {
 		//SOCKET连接需要的类
 		Socket socket = null;
 		DataOutputStream dos=null;
+		FileInputStream fis = null;
 		DataInputStream dis = null;
 		DataInputStream disClient = null;
 		RandomAccessFile raf = null;
@@ -125,7 +126,6 @@ public class UploadTask {
 				ss=new ServerSocket(fileInfo.getPort());
 				socket=ss.accept();
 				dos=new DataOutputStream(socket.getOutputStream());
-				dis = new DataInputStream(new FileInputStream(filePath));
 				disClient = new DataInputStream(socket.getInputStream());
 				int buffferSize=1024;
 				byte[]bufArray=new byte[buffferSize];
@@ -135,8 +135,12 @@ public class UploadTask {
 				dos.flush(); 
 				int start = disClient.readInt();
 				int len = -1;
-				raf = new RandomAccessFile(file, "r");
-				raf.seek(start);
+				//从指定位置开始发送数据
+				fis = new FileInputStream(filePath);
+				fis.skip((long)start);
+				dis = new DataInputStream(fis);
+				//raf = new RandomAccessFile(file, "r");
+				//raf.seek(start);
 				
 				while ((len = dis.read(bufArray)) != -1) { 
 					try {

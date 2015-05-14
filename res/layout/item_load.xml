@@ -8,22 +8,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:paddingBottom="5dp"
         android:paddingLeft="5dp"
         android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:layout_alignParentTop="true"
         android:src="@drawable/ic_tx" />
-
-
 
     <Button
         android:id="@+id/btnButton"
         android:layout_width="wrap_content"
-        android:layout_height="43dp"
-        android:layout_alignBottom="@id/imageView1"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/imageView1"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:gravity="center"
+        android:paddingTop="10dp"
         android:text="开始下载" />
 
     <TextView
@@ -33,19 +32,19 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="5dp"
         android:layout_toRightOf="@id/imageView1"
-        android:singleLine="true"
         android:maxLength="25"
+        android:singleLine="true"
         android:text="文件名.txt" />
-    
+
     <ProgressBar
         android:id="@+id/pbProgress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/tvFileName"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:layout_toRightOf="@id/imageView1"
         android:layout_toLeftOf="@id/btnButton"
-        android:layout_below="@id/tvFileName" />
-    
+        android:layout_toRightOf="@id/imageView1" />
+
 </RelativeLayout>

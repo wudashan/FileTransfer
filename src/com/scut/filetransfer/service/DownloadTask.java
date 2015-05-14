@@ -10,6 +10,7 @@ import java.net.UnknownHostException;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.scut.filetransfer.bean.FileInfo;
 import com.scut.filetransfer.database.FileInfoDAO;
@@ -126,6 +127,7 @@ public class DownloadTask {
 						fileInfo.getFileName())) {
 					fileInfo = fileInfoDAO.getFileInfo(fileInfo.getIP(),
 							fileInfo.getPort(), fileInfo.getFileName());
+					Log.i("DownloadTask", fileInfo.toString());
 				}
 				// 告诉服务器文件开始传输的位置
 				dos.writeInt(fileInfo.getStart());

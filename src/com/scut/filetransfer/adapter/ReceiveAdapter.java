@@ -20,7 +20,7 @@ import android.widget.Toast;
 public class ReceiveAdapter extends CommonAdapter<FileInfo> {
 	
 	private ListView lv_main;
-	private List<Integer> listButton;
+	private List<Integer> listButton;	//表示已完成的button
 
 	public ReceiveAdapter(Context context, List<FileInfo> list, int layoutId,ListView lv_main) {
 		super(context,list,layoutId);
@@ -50,11 +50,13 @@ public class ReceiveAdapter extends CommonAdapter<FileInfo> {
 			btnButton.setBackgroundColor(Color.TRANSPARENT);
 			btnButton.setTextColor(Color.BLACK);
 			btnButton.setText("已完成");
+			btnButton.setOnClickListener(null);
 		}
 		if (fileInfo.getFinished() == 100 && "已完成".equals(btnButton.getText().toString())) {
 			btnButton.setBackgroundColor(Color.TRANSPARENT);
 			btnButton.setTextColor(Color.BLACK);
 			btnButton.setText("已完成");
+			btnButton.setOnClickListener(null);
 		}
 		
 		//将文件id设为position
@@ -131,6 +133,7 @@ public class ReceiveAdapter extends CommonAdapter<FileInfo> {
 			btnButton.setBackgroundColor(Color.TRANSPARENT);
 			btnButton.setTextColor(Color.BLACK);
 			btnButton.setText("已完成");
+			btnButton.setOnClickListener(null);
 			listButton.add(position);
 			Toast.makeText(context, "文件已保存在"+DownloadService.DOWNLOAD_PATH, Toast.LENGTH_SHORT).show();
 		}
