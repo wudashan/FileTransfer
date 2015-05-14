@@ -12,7 +12,6 @@ import android.os.Handler;
 
 /**
  * 适配器管理器
- * @author 210001001427
  *
  */
 public class AdapterManager {
@@ -29,7 +28,6 @@ public class AdapterManager {
 	
 	/**
 	 * 取得设备列表adapter
-	 * @return
 	 */
 	public DeviceListAdapter getDeviceListAdapter(){
 		if(null == mDeviceListAdapter){
@@ -42,7 +40,6 @@ public class AdapterManager {
 	
 	/**
 	 * 取得文件列表adapter
-	 * @return
 	 */
 	public FileListAdapter getFileListAdapter(){
 		if(null == mFileListAdapter){
@@ -54,19 +51,10 @@ public class AdapterManager {
 	}
 	
 	/**
-	 * 更新设备列表
+	 * 更新设备列表listView
 	 */
 	public void updateDeviceAdapter(){
-		if(null == mainHandler){
-			mainHandler = new Handler(mContext.getMainLooper());
-		}
-		mainHandler.post(new Runnable() {
-			
-			@Override
-			public void run() {
 				mDeviceListAdapter.notifyDataSetChanged();
-			}
-		});
 	}
 	
 	/**
@@ -80,7 +68,6 @@ public class AdapterManager {
 	
 	/**
 	 * 添加设备
-	 * @param bluetoothDevice
 	 */
 	public void addDevice(BluetoothDevice bluetoothDevice){
 		mDeviceList.add(bluetoothDevice);
@@ -88,8 +75,6 @@ public class AdapterManager {
 	
 	/**
 	 * 更新设备信息
-	 * @param listId
-	 * @param bluetoothDevice
 	 */
 	public void changeDevice(int listId, BluetoothDevice bluetoothDevice){
 		mDeviceList.remove(listId);
@@ -117,7 +102,6 @@ public class AdapterManager {
 	
 	/**
 	 * 取得设备列表
-	 * @return
 	 */
 	public List<BluetoothDevice> getDeviceList() {
 		return mDeviceList;

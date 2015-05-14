@@ -1,10 +1,11 @@
 package com.scut.filetransfer.listener;
 import com.scut.filetransfer.R;
 import com.scut.filetransfer.activity.PageBlueTooth;
+import com.scut.filetransfer.application.FileTransferApplication;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -27,34 +28,29 @@ public class SetVisibleBtnClickListener implements OnClickListener {
 	private PageBlueTooth mPageBlueTooth;
 
 	private String visibleTime; // 蓝牙可见时间
-	Spinner mSelectTimeSpinner;
-	Button mSelectTimeEnsureBtn;
-	Button mSelectTimeCancelBtn;
-	AlertDialog mSelectTimeDialog; // 选择时间dialog
+	private Spinner mSelectTimeSpinner;
+	private Button mSelectTimeEnsureBtn;
+	private Button mSelectTimeCancelBtn;
+	private Context mContext;
+	private AlertDialog mSelectTimeDialog; // 选择时间dialog
 
 	public SetVisibleBtnClickListener(Fragment fragment) {
 		this.mPageBlueTooth = (PageBlueTooth) fragment;
+		this.mContext = FileTransferApplication.getInstance().getApplicationContext();
 	}
 
 	@Override
 	public void onClick(View v) {
 		if (null == mSelectTimeDialog) {
-			View view = LayoutInflater.from(mPageBlueTooth.getActivity())
-					.inflate(R.layout.select_time_dialog, null);
-			mSelectTimeSpinner = (Spinner) view
-					.findViewById(R.id.selectTimeSpinner);
-			mSelectTimeEnsureBtn = (Button) view
-					.findViewById(R.id.selectTimeEnsureBtn);
-			mSelectTimeCancelBtn = (Button) view
-					.findViewById(R.id.selectTimeCancelBtn);
+			View view = LayoutInflater.from(mPageBlueTooth.getActivity()).inflate(R.layout.select_time_dialog, null);
+			mSelectTimeSpinner = (Spinner) view.findViewById(R.id.selectTimeSpinner);
+			mSelectTimeEnsureBtn = (Button) view.findViewById(R.id.selectTimeEnsureBtn);
+			mSelectTimeCancelBtn = (Button) view.findViewById(R.id.selectTimeCancelBtn);
 
-			ArrayAdapter adapter = new ArrayAdapter(
-					mPageBlueTooth.getActivity(),
-					android.R.layout.simple_spinner_item, arr);
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(mPageBlueTooth.getActivity(),android.R.layout.simple_spinner_item, arr);
 			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			mSelectTimeSpinner.setAdapter(adapter);
-			mSelectTimeSpinner
-					.setOnItemSelectedListener(new OnItemSelectedListener() {
+			mSelectTimeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 						@Override
 						public void onItemSelected(AdapterView<?> parent,
@@ -73,11 +69,8 @@ public class SetVisibleBtnClickListener implements OnClickListener {
 				@Override
 				public void onClick(View v) {
 					// 发送请求，设置蓝牙可见时间
-					Intent intent = new Intent(
-							BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-					intent.putExtra(
-							BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,
-							visibleTime);
+					Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+					intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,Integer.parseInt(visibleTime));
 					mPageBlueTooth.getActivity().startActivity(intent);
 					mSelectTimeDialog.dismiss();
 				}
@@ -89,9 +82,9 @@ public class SetVisibleBtnClickListener implements OnClickListener {
 					mSelectTimeDialog.dismiss();
 				}
 			});
-			mSelectTimeDialog = new AlertDialog.Builder(
-					mPageBlueTooth.getActivity()).setTitle("设置蓝牙可见")
-					.setView(view).create();
+			mSelectTimeDialog = new AlertDialog.Builder(mPageBlueTooth.getActivity()).create();
+			mSelectTimeDialog.setTitle(mContext.getString(R.string.set_bluetooth_see));
+			mSelectTimeDialog.setView(view);
 		}
 		mSelectTimeDialog.show();
 	}

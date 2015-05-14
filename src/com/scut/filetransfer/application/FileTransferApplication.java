@@ -4,36 +4,36 @@ import com.scut.filetransfer.entity.TouchObject;
 
 import android.app.Application;
 
-public class BluetoothApplication extends Application {
+public class FileTransferApplication extends Application {
 	/**
-	 * Application实例
+	 * Application实例--单例模式
 	 */
-	private static BluetoothApplication application;
+	private static FileTransferApplication application;
 	
 	/**
-	 * 
+	 * AdapterManager实例
 	 */
 	private AdapterManager mAdapterManager;
 	
 	/**
-	 * 当前操作的对象;
+	 * 当前操作的对象实例
 	 */
 	private TouchObject mTouchObject;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		if(null == application){
+		if(application == null){
 			application = this;
 		}
 		mTouchObject = new TouchObject();
+		mAdapterManager = new AdapterManager(getApplicationContext());
 	}
 	
 	/**
 	 * 获取Application实例
-	 * @return
 	 */
-	public static BluetoothApplication getInstance(){
+	public static FileTransferApplication getInstance(){
 		return application;
 	}
 

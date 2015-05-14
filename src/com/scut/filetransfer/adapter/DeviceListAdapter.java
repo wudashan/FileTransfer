@@ -6,6 +6,7 @@ import com.scut.filetransfer.bean.Device;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +63,8 @@ public class DeviceListAdapter extends BaseAdapter {
 		} catch (Exception e) {
 			device.mDeviceNameTV.setText("null");
 		}
-		if(bluetoothDevice.getBondState() == BluetoothDevice.BOND_BONDED){
+		Log.i("DeviceListAdapter", bluetoothDevice.getBondState()+"");
+		if(bluetoothDevice.getBondState() == BluetoothDevice.BOND_BONDING){
 			pairInfo = "“—≈‰∂‘";
 		}else {
 			pairInfo = "Œ¥≈‰∂‘";

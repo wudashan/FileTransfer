@@ -1,8 +1,8 @@
 package com.scut.filetransfer.receiver;
+import com.scut.filetransfer.R;
 import com.scut.filetransfer.activity.PageBlueTooth;
 import com.scut.filetransfer.adapter.AdapterManager;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -15,19 +15,21 @@ import android.widget.Toast;
 
 /**
  * 蓝牙扫描监听器
- * @author 210001001427
  *
  */
 public class ScanBluetoothReceiver extends BroadcastReceiver {
 	private PageBlueTooth mPageBlueTooth;
 	private AdapterManager mAdapterManager;
 	private ProgressDialog mProgressDialog;
+	private Context mContext;
 	private boolean isFirstSearch = true;
 	
-	public ScanBluetoothReceiver(Fragment fragment, AdapterManager adapterManager, ProgressDialog progressDialog){
+	public ScanBluetoothReceiver(Context context,Fragment fragment, AdapterManager adapterManager, ProgressDialog progressDialog){
 		this.mPageBlueTooth = (PageBlueTooth) fragment;
 		this.mAdapterManager = adapterManager;
 		this.mProgressDialog = progressDialog;
+		this.mContext = context;
+		
 	}
 
 	@Override
@@ -40,11 +42,11 @@ public class ScanBluetoothReceiver extends BroadcastReceiver {
 			mAdapterManager.updateDeviceAdapter();
 		}else if(intent.getAction().equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)){
 			//扫描设备结束
-			Log.i("BluetoothDemo", "over");
+			Log.i("ScanBluetoothReceiver", "BluetoothAdapter.ACTION_DISCOVERY_FINISHED");
 			mProgressDialog.dismiss();
 			if(mAdapterManager.getDeviceList().size() == 0){
 				//扫描到的设备数为0
-				Toast.makeText(mPageBlueTooth.getActivity(), "没有找到其它蓝牙设备！", Toast.LENGTH_LONG).show();
+				Toast.makeText(mPageBlueTooth.getActivity(),mContext.getString(R.string.no_find_other_bluetooth_device) , Toast.LENGTH_LONG).show();
 			}
 			if(isFirstSearch){
 				//第一次查找后， 设置按钮显示文本为 "重新查找"

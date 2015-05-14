@@ -1,6 +1,6 @@
 package com.scut.filetransfer.receiver;
 import com.scut.filetransfer.adapter.AdapterManager;
-import com.scut.filetransfer.application.BluetoothApplication;
+import com.scut.filetransfer.application.FileTransferApplication;
 import com.scut.filetransfer.entity.TouchObject;
 
 import android.app.Activity;
@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 /**
  * Åä¶Ô×´Ì¬¸Ä±ä¼àÌýÆ÷
@@ -15,13 +16,13 @@ import android.content.Intent;
  *
  */
 public class PairStateChangeReceiver extends BroadcastReceiver {
-	private BluetoothApplication mApplication;
+	private FileTransferApplication mApplication;
 	private Activity mActivity;
 	private AdapterManager mAdapterManager;
 	private TouchObject mTouchObject;
 	
 	public PairStateChangeReceiver(Activity activity){
-		this.mApplication = BluetoothApplication.getInstance();
+		this.mApplication = FileTransferApplication.getInstance();
 		this.mActivity = activity;
 	}
 
@@ -39,6 +40,7 @@ public class PairStateChangeReceiver extends BroadcastReceiver {
 			BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 			mAdapterManager.changeDevice(mTouchObject.clickDeviceItemId, device);
 			mAdapterManager.updateDeviceAdapter();
+			Log.i("PairStateChangeReceiver", "BluetoothDevice.ACTION_BOND_STATE_CHANGED");
 			mActivity.unregisterReceiver(this);
 		}
 	}

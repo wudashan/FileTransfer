@@ -2,6 +2,7 @@ package com.scut.filetransfer.activity;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
@@ -13,9 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -29,7 +28,7 @@ import java.lang.reflect.Method;
 
 import com.scut.filetransfer.R;
 import com.scut.filetransfer.adapter.AdapterManager;
-import com.scut.filetransfer.application.BluetoothApplication;
+import com.scut.filetransfer.application.FileTransferApplication;
 import com.scut.filetransfer.entity.MyMenuItem;
 import com.scut.filetransfer.entity.TouchObject;
 import com.scut.filetransfer.listener.DeviceListCCMenuListener;
@@ -47,14 +46,17 @@ public class PageBlueTooth extends Fragment {
 	
 	
 	
-	private BluetoothApplication mApplication;
+	private FileTransferApplication mApplication;
+	private Context mContext;
 	private AdapterManager mAdapterManager; // Adapter管理器
 	private TouchObject mTouchObject; // 当前操作对象
-	
 	private PairStateChangeReceiver mPairStateChangeReceiver; // 配对状态改变广播接收器
 	private BluetoothSocket socket; // 蓝牙连接socket
 	private Handler mOthHandler; // 其它线程Handler
 	private SearchDeviceBtnClickListener mSearchDeviceBtnClickListener; // 搜索设备按钮监听器
+	private DeviceListCCMenuListener mDeviceListCCMenuListener;
+	private SetVisibleBtnClickListener mSetVisibleBtnClickListener;
+	private SelectFileBtnClickListener mSelectFileBtnClickListener;
 
 	
 	
@@ -72,6 +74,7 @@ public class PageBlueTooth extends Fragment {
 		
 		View view = inflater.inflate(R.layout.page_bluetooth, container, false);
 		
+		//布局加载
 		mDeviceListView = (ListView) view.findViewById(R.id.deviceListView);
 		mSetVisibleBtn = (LinearLayout) view.findViewById(R.id.setDeviceVisibleBtn);
 		mSearchDeviceBtn = (LinearLayout) view.findViewById(R.id.searchDeviceBtn);
@@ -79,18 +82,24 @@ public class PageBlueTooth extends Fragment {
 		mSendFileNameTV = (TextView) view.findViewById(R.id.sendFileTV);
 		mSearchBtnText = (TextView) view.findViewById(R.id.searchBtnText);
 		
-		mApplication = BluetoothApplication.getInstance();
+		mApplication = FileTransferApplication.getInstance();
+		mContext = mApplication.getApplicationContext();
 		mTouchObject = mApplication.getTouchObject();
-		// 实例化Adapter管理器并设置到Application
-		mAdapterManager = new AdapterManager(getActivity());
-		mApplication.setAdapterManager(mAdapterManager);
-		mDeviceListView.setAdapter(mAdapterManager.getDeviceListAdapter());
-		mSearchDeviceBtnClickListener = new SearchDeviceBtnClickListener(this);
+		mAdapterManager = mApplication.getAdapterManager();
 		
-		mDeviceListView.setOnCreateContextMenuListener(new DeviceListCCMenuListener(mDeviceListView));
-		mSetVisibleBtn.setOnClickListener(new SetVisibleBtnClickListener(this));
+		mDeviceListView.setAdapter(mAdapterManager.getDeviceListAdapter());
+		mDeviceListCCMenuListener = new DeviceListCCMenuListener(mDeviceListView);
+		mDeviceListView.setOnCreateContextMenuListener(mDeviceListCCMenuListener);
+		
+		mSearchDeviceBtnClickListener = new SearchDeviceBtnClickListener(this);
 		mSearchDeviceBtn.setOnClickListener(mSearchDeviceBtnClickListener);
-		mSelectFileBtn.setOnClickListener(new SelectFileBtnClickListener(this));
+		
+		
+		mSetVisibleBtnClickListener = new SetVisibleBtnClickListener(this);
+		mSetVisibleBtn.setOnClickListener(mSetVisibleBtnClickListener);
+		
+		mSelectFileBtnClickListener = new SelectFileBtnClickListener(this);
+		mSelectFileBtn.setOnClickListener(mSelectFileBtnClickListener);
 		
 		return view;
 	}
@@ -99,11 +108,10 @@ public class PageBlueTooth extends Fragment {
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.e("PageBlueTooth", requestCode+" "+resultCode);
 		if (requestCode == REQUEST_ENABLE) {
 			// 请求为 "打开蓝牙"
 			if (resultCode == Activity.RESULT_OK) {
-				// 打开蓝牙成功
+				// 打开蓝牙成功，开始搜索附近的蓝牙设备
 				mSearchDeviceBtnClickListener.beginDiscovery();
 			} else {
 				// 打开蓝牙失败
@@ -119,7 +127,9 @@ public class PageBlueTooth extends Fragment {
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 	
-	
+	/**
+	 * 长按的操作
+	 */
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		if (item.getGroupId() == MyMenuItem.MENU_GROUP_DEVICE) {
@@ -152,6 +162,7 @@ public class PageBlueTooth extends Fragment {
 			IntentFilter intentFilter = new IntentFilter();
 			intentFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
 			getActivity().registerReceiver(mPairStateChangeReceiver, intentFilter);
+			//标记
 			if (null == mOthHandler) {
 				HandlerThread handlerThread = new HandlerThread("other_thread");
 				handlerThread.start();
@@ -164,7 +175,6 @@ public class PageBlueTooth extends Fragment {
 					initSocket(); // 取得socket
 					try {
 						socket.connect(); // 请求配对
-						// mAdapterManager.updateDeviceAdapter();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -172,8 +182,7 @@ public class PageBlueTooth extends Fragment {
 			});
 		} else {
 			// 已经与该设备配对
-			Toast.makeText(getActivity(), "该设备已配对，无需重复操作！",
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(getActivity(), mContext.getString(R.string.has_already_attach),Toast.LENGTH_LONG).show();
 		}
 	}
 	
@@ -218,22 +227,19 @@ public class PageBlueTooth extends Fragment {
 				}
 			});
 		} else {
-			Toast.makeText(getActivity(), "请选择要发送的文件!",
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(getActivity(), mContext.getString(R.string.please_select_file),Toast.LENGTH_LONG).show();
 		}
 	}
 	
 	
 	/**
-	 * 取得BluetoothSocket
+	 * 取得BluetoothSocket，通过反射
 	 */
 	private void initSocket() {
-		BluetoothSocket temp = null;
 		try {
 			Method m = mTouchObject.bluetoothDevice.getClass().getMethod(
 					"createRfcommSocket", new Class[] { int.class });
-			temp = (BluetoothSocket) m.invoke(mTouchObject.bluetoothDevice, 1);
-			// 怪异错误： 直接赋值给socket,对socket操作可能出现异常， 要通过中间变量temp赋值给socket
+			socket = (BluetoothSocket) m.invoke(mTouchObject.bluetoothDevice, 1);
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
@@ -245,7 +251,6 @@ public class PageBlueTooth extends Fragment {
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
-		socket = temp;
 	}
 	
 	/**

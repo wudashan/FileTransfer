@@ -4,7 +4,7 @@ import java.io.File;
 import com.scut.filetransfer.R;
 import com.scut.filetransfer.adapter.AdapterManager;
 import com.scut.filetransfer.adapter.FileListAdapter;
-import com.scut.filetransfer.application.BluetoothApplication;
+import com.scut.filetransfer.application.FileTransferApplication;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -59,7 +59,7 @@ public class SelectFileActivity extends Activity {
 		sdcardPath = Environment.getExternalStorageDirectory().getAbsolutePath();
 		path = sdcardPath;
 		
-		mAdapterManager = BluetoothApplication.getInstance().getAdapterManager();
+		mAdapterManager = FileTransferApplication.getInstance().getAdapterManager();
 		mFileListView.setAdapter(mAdapterManager.getFileListAdapter());
 		//首先显示sd卡下所有文件及文件夹
 		mAdapterManager.updateFileListAdapter(path);

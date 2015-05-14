@@ -6,7 +6,8 @@
     <string name="send">发送</string>
     <string name="receive">接收</string>
     <string name="bluetooth">蓝牙</string>
-    
+    <string name="open_bluetooth">打开蓝牙</string>
+    <string name="is_open_bluetooth">蓝牙未打开，是否打开？</string>
     <string name="exit">退出</string>
     <string name="no_wifi">请连接到无线网络</string>
     <string name="comfirm">确定</string>
@@ -18,6 +19,12 @@
     <string name="input_check_code">请输入验证码</string>
     <string name="device_list">设备列表</string>
     <string name="search_device">搜索设备</string>
+    <string name="searching_device">搜索设备中...</string>
+    <string name="no_find_other_bluetooth_device">没有找到其它蓝牙设备！</string>
+    <string name="set_bluetooth_see">设置蓝牙可见</string>
+    <string name="please_select_do_what">请选择操作</string>
+    <string name="has_already_attach">该设备已配对，无需重复操作！</string>
+    <string name="please_select_file">请选择要发送的文件!</string>
     <string name="send_file">发送文件</string>
     <string name="device_name">设备名</string>
     <string name="is_pair">是否配对</string>
