@@ -4,33 +4,37 @@ import java.util.List;
 
 import com.scut.filetransfer.R;
 import com.scut.filetransfer.adapter.SendAdapter;
+import com.scut.filetransfer.application.FileTransferApplication;
 import com.scut.filetransfer.bean.FileInfo;
 import com.scut.filetransfer.service.ConnectionManager;
 import com.scut.filetransfer.service.UploadService;
+import com.scut.filetransfer.util.PortUtil;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class PageSend extends Fragment implements OnClickListener {
-
+	
 	private LinearLayout searchFriend, showFile, startSend;
 	private TextView userToSend, fileToSend;
 	private String fileName, filePath;
 	private List<FileInfo> listSend = null;
 	private ListView lvSendMission = null;
 	private SendAdapter adapter = null;
-	private String sendip;
+	private String sendIp;
+	private String tempSendIp;
+	private String tempfileName;
+	private Context mContext;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,9 +54,13 @@ public class PageSend extends Fragment implements OnClickListener {
 		listSend = new ArrayList<FileInfo>();
 		adapter = new SendAdapter(listSend, getActivity(), R.layout.item_send);
 		lvSendMission.setAdapter(adapter);
+		mContext = FileTransferApplication.getInstance().getApplicationContext();
 		return view;
 	}
 
+	
+	
+	
 	@Override
 	public void onClick(View arg0) {
 		switch (arg0.getId()) {
@@ -61,30 +69,39 @@ public class PageSend extends Fragment implements OnClickListener {
 			startActivityForResult(intent, 1);
 			break;
 		case R.id.startSend:
-			if (sendip == null || sendip.equals("")) {
-				Toast.makeText(getActivity(), "请先选好要发送的对象！", Toast.LENGTH_LONG)
-						.show();
+			
+			if (sendIp == null || sendIp.equals("")) {
+				Toast.makeText(mContext, mContext.getString(R.string.please_select_who_to_send), Toast.LENGTH_LONG).show();
 				break;
 			}
 			if (fileName == null) {
-				Toast.makeText(getActivity(), "请先选好要发送的文件！", Toast.LENGTH_LONG)
-						.show();
+				Toast.makeText(mContext, mContext.getString(R.string.please_select_file), Toast.LENGTH_LONG).show();
 				break;
 			}
-
-			if (sendip != null && !sendip.equals("") && fileName != null) {
+			
+			if (tempfileName == fileName && sendIp == tempSendIp) {
+				//同一文件，用户重复点击发送button，不予理会
+				Toast.makeText(mContext, mContext.getString(R.string.please_do_not_click_again), Toast.LENGTH_LONG).show();
+				break;
+			}
+			
+			if (sendIp != null && !sendIp.equals("") && fileName != null) {
 				new Thread() {
 					public void run() {
-						ConnectionManager.sendMsg(sendip, "start,"
+						ConnectionManager.sendMsg(sendIp, "start,"
 								+ ConnectionManager.getIpAddress() + "," + fileName);
 					};
 				}.start();
 
+				//判断端口是否被占用
+				
+				
 				// 这里设置发送端的IP和端口号
+				tempfileName = fileName;
+				tempSendIp = sendIp;
 				FileInfo fileInfo = new FileInfo();
-				fileInfo.setIP(sendip);
-				System.out.println(sendip);
-				fileInfo.setPort(8879);
+				fileInfo.setIP(sendIp);
+				fileInfo.setPort(PortUtil.PORT);
 				filePath = filePath + "/" + fileName;
 				fileInfo.setFileName(filePath);
 				listSend.add(fileInfo);
@@ -121,8 +138,8 @@ public class PageSend extends Fragment implements OnClickListener {
 			break;
 		case 2:
 			Bundle bunde = data.getExtras();
-			sendip = bunde.getString("ip");
-			userToSend.setText(sendip);
+			sendIp = bunde.getString("ip");
+			userToSend.setText(sendIp);
 			break;
 		default:
 			break;

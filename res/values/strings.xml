@@ -34,7 +34,8 @@
     <string name="send_file1">发送文件：</string>
     <string name="null_name">null</string>
     <string name="ensure">确定</string>
-    
+    <string name="please_do_not_click_again">文件已在发送队列，请勿重复点击！</string>
+    <string name="please_select_who_to_send">请先选好要发送的对象！</string>
     <string name="back">返回</string>
     <string name="set_visible">设置可见</string>
     <string name="set_visible_time">设置可见时间:</string>

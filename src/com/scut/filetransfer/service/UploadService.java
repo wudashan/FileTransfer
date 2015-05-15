@@ -25,11 +25,6 @@ public class UploadService extends Service{
 	
 	@Override
 	public void onDestroy() {
-		for (int i = 0; i<MAX_NUM; i++) {
-			if (uploadTasks[i] != null) {
-				uploadTasks[i].uploadThread.onDestroySocketConnection();
-			}
-		}
 		super.onDestroy();
 	}
 

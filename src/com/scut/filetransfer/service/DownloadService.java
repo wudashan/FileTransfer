@@ -28,11 +28,6 @@ public class DownloadService extends Service{
 	
 	@Override
 	public void onDestroy() {
-		for (int i = 0; i<MAX_NUM; i++) {
-			if (downloadTask[i] != null) {
-				downloadTask[i].downloadThread.onDestroySocketConnection();
-			}
-		}
 		super.onDestroy();
 	}
 	
@@ -40,9 +35,6 @@ public class DownloadService extends Service{
 	//启动Service
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		
-		
-		
 		
 		//当被进程杀死时，会自动调用onStartCommand方法，防止空指针异常
 		if (intent != null) {

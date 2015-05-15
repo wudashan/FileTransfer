@@ -78,40 +78,6 @@ public class DownloadTask {
 			super();
 		}
 
-		/**
-		 * 当Service被强制关闭时，启动该方法，结束所有连接
-		 */
-		public void onDestroySocketConnection() {
-			if (socket != null) {
-				try {
-					socket.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (dos != null) {
-				try {
-					dos.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (dis != null) {
-				try {
-					dis.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (raf != null) {
-				try {
-					raf.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
 
 		public void run() {
 
@@ -211,10 +177,19 @@ public class DownloadTask {
 				e.printStackTrace();
 			} finally {
 				try {
-					socket.close();
-					dis.close();
-					raf.close();
-					dos.close();
+					if (socket !=null) {
+						socket.close();
+					}
+					if (dos != null) {
+						dos.close();
+					}
+					if (dis != null) {
+						dis.close();
+					}
+
+					if (raf != null) {
+						raf.close();
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

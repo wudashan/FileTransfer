@@ -1,4 +1,5 @@
 package com.scut.filetransfer.service;
+
 import android.content.Context;
 
 import java.io.DataInputStream;
@@ -11,16 +12,19 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import com.scut.filetransfer.activity.PageSend;
 import com.scut.filetransfer.bean.FileInfo;
 import com.scut.filetransfer.util.AESUtil;
+import com.scut.filetransfer.util.PortUtil;
 
 /**
  * 上传任务类
+ * 
  * @author Wise
- *
+ * 
  */
 public class UploadTask {
-	
+
 	private Context context;
 	private FileInfo fileInfo;
 	private int finished;
@@ -28,145 +32,113 @@ public class UploadTask {
 	private boolean isPause;
 	private AESUtil aesUtil;
 	public UploadThread uploadThread;
+	//所有线程公用一个ServerSocket
+	public static ServerSocket socketServer ;
 	
-	public void Pause(){
+	static{
+		try {
+			socketServer = new ServerSocket(PortUtil.PORT);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void Pause() {
 		isPause = true;
 	}
-	
-	public void Resume(){
+
+	public void Resume() {
 		isPause = false;
 	}
-	
-	public UploadTask(Context context, FileInfo fileInfo,String filePath) {
+
+	public UploadTask(Context context, FileInfo fileInfo, String filePath) {
 		super();
 		this.context = context;
 		this.fileInfo = fileInfo;
 		this.filePath = filePath;
 		aesUtil = AESUtil.getInstance();
 	}
-	
-	public void upload(){
-		//创建下载进程
+
+	public void upload() {
+		// 创建下载进程
 		uploadThread = new UploadThread();
 		uploadThread.start();
 	}
-	
-	
+
 	/**
 	 * 上传线程
+	 * 
 	 * @author Wise
-	 *
+	 * 
 	 */
-	 class UploadThread extends Thread{
-		
-		//SOCKET连接需要的类
-		Socket socket = null;
-		DataOutputStream dos=null;
-		FileInputStream fis = null;
-		DataInputStream dis = null;
-		DataInputStream disClient = null;
-		RandomAccessFile raf = null;
-		ServerSocket ss=null;
-		
-		/**
-		 * 当Service被强制关闭时，启动该方法，结束所有连接
-		 */
-		public void onDestroySocketConnection(){
-			if (socket != null) {
-				try {
-					socket.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (dos != null) {
-				try {
-					dos.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (dis != null) {
-				try {
-					dis.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (disClient != null) {
-				try {
-					disClient.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (raf != null) {
-				try {
-					raf.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (ss != null) {
-				try {
-					ss.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		public UploadThread() {
-			super();
-		}
-		
-		public void run(){
+	class UploadThread extends Thread {
+
+
+		public void run() {
+			
+			File file = new File(filePath);
+			ServerSocket ss = null;
+			Socket socket = null;
+			DataOutputStream dos = null;
+			DataInputStream disClient = null;
+			FileInputStream fis = null;
+			DataInputStream dis = null;
 			try {
-				File file=new File(filePath);
-				ss=new ServerSocket(fileInfo.getPort());
-				socket=ss.accept();
-				dos=new DataOutputStream(socket.getOutputStream());
+				ss = socketServer;
+				socket = ss.accept();
+				dos = new DataOutputStream(socket.getOutputStream());
 				disClient = new DataInputStream(socket.getInputStream());
-				int buffferSize=1024;
-				byte[]bufArray=new byte[buffferSize];
-				dos.writeUTF(file.getName()); 
-				dos.flush(); 
-				dos.writeInt((int) file.length()); 
-				dos.flush(); 
+				int buffferSize = 1024;
+				byte[] bufArray = new byte[buffferSize];
+				dos.writeUTF(file.getName());
+				dos.flush();
+				dos.writeInt((int) file.length());
+				dos.flush();
 				int start = disClient.readInt();
 				int len = -1;
-				//从指定位置开始发送数据
+				// 从指定位置开始发送数据
 				fis = new FileInputStream(filePath);
-				fis.skip((long)start);
+				fis.skip((long) start);
 				dis = new DataInputStream(fis);
-				//raf = new RandomAccessFile(file, "r");
-				//raf.seek(start);
-				
-				while ((len = dis.read(bufArray)) != -1) { 
+
+				while ((len = dis.read(bufArray)) != -1) {
 					try {
 						aesUtil.encrypt(bufArray);
-						dos.write(bufArray, 0, len); 
+						dos.write(bufArray, 0, len);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-				} 
+				}
 				dos.flush();
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
-			}finally{
+			} finally {
 				try {
-					socket.close();
-					dis.close();
-					disClient.close();
-					dos.close();
-					ss.close();
+					if (ss != null) {
+						ss.close();
+					}
+					if (socket != null) {
+						socket.close();
+					}
+					if (dos != null) {
+						dos.close();
+					}
+					if (dis !=null) {
+						dis.close();
+					}
+					if (disClient !=null) {
+						disClient.close();
+					}
+					if (fis !=null) {
+						fis.close();
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		
+
 	}
 }
