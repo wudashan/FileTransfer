@@ -56,14 +56,8 @@ public class ScanActivity extends Activity {
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.scan_activity);
 		initView();
-		if (!isWifiConnected(this)) {
-			Toast.makeText(this, getString(R.string.no_wifi),
-					Toast.LENGTH_SHORT).show();
-			finish();
-		} else {
-			startScan();
-			rsaUtil = RSAUtil.getInstance();
-		}
+		startScan();
+		rsaUtil = RSAUtil.getInstance();
 	}
 
 	/**
@@ -213,18 +207,6 @@ public class ScanActivity extends Activity {
 		int y = new Random().nextInt(height - 115);
 		Point point = new Point(x, y);
 		return point;
-	}
-
-	private boolean isWifiConnected(Context context) {
-		ConnectivityManager connectivityManager = (ConnectivityManager) context
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo wifiNetworkInfo = connectivityManager
-				.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		if (wifiNetworkInfo.isConnected()) {
-			return true;
-		}
-
-		return false;
 	}
 
 	/**

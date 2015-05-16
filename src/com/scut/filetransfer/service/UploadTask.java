@@ -1,6 +1,7 @@
 package com.scut.filetransfer.service;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -100,11 +101,13 @@ public class UploadTask {
 				fis = new FileInputStream(filePath);
 				fis.skip((long) start);
 				dis = new DataInputStream(fis);
-
+				
 				while ((len = dis.read(bufArray)) != -1) {
 					try {
 						byte[] result = aesUtil.encrypt(bufArray);
-						System.err.println("√‹‘ø£∫" + aesUtil.getSeed());
+						//System.err.println("≥§∂»£∫" + result.length);
+						//System.err.println("√‹‘ø£∫" + aesUtil.getSeed());
+						Log.i("UploadTask", result.length+"");
 						dos.write(result, 0, result.length);
 					} catch (Exception e) {
 						e.printStackTrace();

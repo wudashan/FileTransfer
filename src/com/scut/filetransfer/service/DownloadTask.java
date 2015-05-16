@@ -116,7 +116,7 @@ public class DownloadTask {
 					fileInfoDAO.insertFileInfo(fileInfo);
 				}
 				// 设置buff
-				int bufferSize = 1024;
+				int bufferSize = 2080;
 				byte[] buffer = new byte[bufferSize];
 				byte[] result = null;
 				int len = -1;
@@ -130,7 +130,8 @@ public class DownloadTask {
 						e.printStackTrace();
 					}
 					raf.write(result, 0, result.length);
-					start += len;
+					Log.i("DownloadTask", result.length+"");
+					start += result.length;
 					// long型防止数据溢出
 					progressBar = (long) start * 100
 							/ (long) fileInfo.getLength();
