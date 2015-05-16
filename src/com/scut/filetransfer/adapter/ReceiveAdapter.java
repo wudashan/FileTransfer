@@ -9,6 +9,7 @@ import com.scut.filetransfer.service.DownloadService;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -61,8 +62,7 @@ public class ReceiveAdapter extends CommonAdapter<FileInfo> {
 		
 		//将文件id设为position
 		fileInfo.setId(holder.getPosition());
-		System.out.println("holder.getPosition() and fileInfo.getId():"+fileInfo.getId());
-		
+		Log.i("ReceiveAdapter", "holder.getPosition() and fileInfo.getId():"+fileInfo.getId());
 		btnButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -114,7 +114,6 @@ public class ReceiveAdapter extends CommonAdapter<FileInfo> {
 		//得到第1个可显示控件的位置,记住是第1个可显示控件噢。而不是第1个控件
 		int visiblePosition = lv_main.getFirstVisiblePosition(); 
 		//得到你需要更新item的View,若控件不在显示范围，则不进行更新
-		//int count = lv_main.getLastVisiblePosition() - lv_main.getFirstVisiblePosition() +1;
 		if (position > lv_main.getLastVisiblePosition() || position < lv_main.getFirstVisiblePosition()) {
 			return ;
 		}	
@@ -129,7 +128,6 @@ public class ReceiveAdapter extends CommonAdapter<FileInfo> {
 		tvFileName.setText(fileInfo.getFileName());
 		
 		if (fileInfo.getFinished() == 100) {
-			//btnButton.setVisibility(Button.INVISIBLE);
 			btnButton.setBackgroundColor(Color.TRANSPARENT);
 			btnButton.setTextColor(Color.BLACK);
 			btnButton.setText("已完成");

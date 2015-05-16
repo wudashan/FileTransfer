@@ -131,6 +131,7 @@ public class ChangeColorIconWithText extends View {
 	private void drawTargetText(Canvas canvas, int alpha) {
 		mTextPaint.setColor(mColor);
 		mTextPaint.setAlpha(alpha);
+		mTextPaint.setAntiAlias(true); 
 		int x = getMeasuredWidth() / 2 - mTextBound.width() / 2;
 		int y = mIconRect.bottom + mTextBound.height();
 		canvas.drawText(mText, x, y, mTextPaint);
@@ -146,6 +147,7 @@ public class ChangeColorIconWithText extends View {
 	private void drawSourceText(Canvas canvas, int alpha) {
 		mTextPaint.setColor(0xff333333);
 		mTextPaint.setAlpha(255 - alpha);
+		mTextPaint.setAntiAlias(true); 
 		int x = getMeasuredWidth() / 2 - mTextBound.width() / 2;
 		int y = mIconRect.bottom + mTextBound.height();
 		canvas.drawText(mText, x, y, mTextPaint);
