@@ -31,6 +31,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.InputType;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -60,14 +61,14 @@ public class SocketServer {
 				showInputDialog(msg.getData().getString("ip"));
 				break;
 			case 2:
-				if (clientList != null && !clientList.isEmpty() && clientList.size() != clientNumber) {
+				if (clientList != null && !clientList.isEmpty()
+						&& clientList.size() != clientNumber) {
 					for (int i = clientNumber; i < clientList.size(); i++) {
 						Point point = ((ScanActivity) context).randomPoint();
-						((ScanActivity) context).addImage(R.drawable.head, point.x,
-								point.y, clientList.get(i));
+						((ScanActivity) context).addImage(R.drawable.head,
+								point.x, point.y, clientList.get(i));
 					}
 					clientNumber = clientList.size();
-					System.out.println("当前客户端数目：" + clientNumber);
 				}
 				break;
 			default:
@@ -77,11 +78,13 @@ public class SocketServer {
 	};
 
 	private static SocketServer socketServer;
-	public static SocketServer getInstance(){
-		if(socketServer == null)
+
+	public static SocketServer getInstance() {
+		if (socketServer == null)
 			socketServer = new SocketServer();
 		return socketServer;
 	}
+
 	private SocketServer() {
 		try {
 			server = new ServerSocket(ConnectionManager.SERVERPORT);
@@ -121,19 +124,15 @@ public class SocketServer {
 		} else {
 			String tag = result[0];
 			String value = result[1];
-			System.out.println(message);
 			/**
 			 * 接收到验证请求，私钥解密，比对验证码
 			 */
 			if (tag.equals("check")) {
 				String receivedCode = null;
 				try {
-					System.out.println("我的验证码：" + code);
 					receivedCode = ((ScanActivity) context).getRSAUtil()
 							.decodeByPrivate(Base64Utils.decode(value));
-					System.out.println("收到的验证码：" + receivedCode);
 				} catch (Exception e) {
-					System.out.println("解密验证码出错了");
 					e.printStackTrace();
 				}
 				String correctCode = null;
@@ -147,7 +146,7 @@ public class SocketServer {
 						&& correctCode.equals(receivedCode)) {
 					String ip = result[2];
 					String aesCode = new RandomNum(5).getCode();
-					aesUtil = AESUtil.getInstance(aesCode);
+					aesUtil = AESUtil.getInstance(aesCode + code);
 					try {
 						sendMsg = Base64Utils.encode(((ScanActivity) context)
 								.getRSAUtil().encodeByPrivate(aesCode));
@@ -155,7 +154,6 @@ public class SocketServer {
 						e.printStackTrace();
 					}
 					((ScanActivity) context).finish();
-					aesUtil.setSeed(aesCode + code);
 					ConnectionManager.sendMsg(ip, "send," + sendMsg);
 				}
 			}
@@ -165,15 +163,13 @@ public class SocketServer {
 			else if (tag.equals("send")) {
 				String receivedCode = null;
 				try {
-					System.out.println("用来解密的公钥：" + publicKey);
 					receivedCode = ((ScanActivity) context).getRSAUtil()
 							.decodeByPublic(Base64Utils.decode(value),
 									publicKey);
 				} catch (Exception e) {
-					System.out.println("解密对称密钥出错了");
 					e.printStackTrace();
 				}
-				aesUtil = AESUtil.getInstance(receivedCode + code);
+				aesUtil = AESUtil.getInstance(receivedCode + myCode);
 				((ScanActivity) context).finish();
 			}
 			/**
@@ -190,7 +186,6 @@ public class SocketServer {
 			 */
 			else {
 				publicKey = value;
-				System.out.println("收到的公钥：" + publicKey);
 				Message msg = new Message();
 				Bundle bundle = new Bundle();
 				bundle.putString("ip", tag);
@@ -209,10 +204,11 @@ public class SocketServer {
 	}
 
 	private String sendMsg = null;
+	private String myCode;
 
 	private void showInputDialog(final String ip) {
 		final EditText et = new EditText(context);
-
+		et.setInputType(InputType.TYPE_CLASS_NUMBER);
 		new AlertDialog.Builder(context)
 				.setTitle(context.getString(R.string.input_check_code))
 				.setView(et)
@@ -229,6 +225,7 @@ public class SocketServer {
 											Toast.LENGTH_SHORT).show();
 								} else {
 									try {
+										myCode = input;
 										input = MD5Util.getMD5(input
 												+ context
 														.getString(R.string.app_name));

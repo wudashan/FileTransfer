@@ -103,8 +103,9 @@ public class UploadTask {
 
 				while ((len = dis.read(bufArray)) != -1) {
 					try {
-						aesUtil.encrypt(bufArray);
-						dos.write(bufArray, 0, len);
+						byte[] result = aesUtil.encrypt(bufArray);
+						System.err.println("√‹‘ø£∫" + aesUtil.getSeed());
+						dos.write(result, 0, result.length);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

@@ -118,17 +118,18 @@ public class DownloadTask {
 				// 设置buff
 				int bufferSize = 1024;
 				byte[] buffer = new byte[bufferSize];
+				byte[] result = null;
 				int len = -1;
 				long oldProgressBar = 0;
 				long progressBar = 0;
 				while ((len = dis.read(buffer)) != -1) {
 					// 若有数据可以读取，写入文件
 					try {
-						aesUtil.decrypt(buffer);
+						result = aesUtil.decrypt(buffer);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					raf.write(buffer, 0, len);
+					raf.write(result, 0, result.length);
 					start += len;
 					// long型防止数据溢出
 					progressBar = (long) start * 100
