@@ -1,4 +1,5 @@
 package com.scut.filetransfer.activity;
+
 import java.util.Random;
 
 import com.scut.filetransfer.R;
@@ -9,6 +10,8 @@ import com.scut.filetransfer.util.RandomNum;
 import com.scut.filetransfer.view.CircleImageView;
 import com.scut.filetransfer.view.ScanView;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -25,6 +28,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 public class ScanActivity extends Activity {
 
@@ -57,7 +61,7 @@ public class ScanActivity extends Activity {
 	}
 
 	/**
-	 * 初始化控??
+	 * 初始化控件
 	 */
 	private void initView() {
 		layout = (RelativeLayout) findViewById(R.id.layout);
@@ -127,7 +131,7 @@ public class ScanActivity extends Activity {
 								intent.putExtra("ip", user.getIpAddress());
 								ScanActivity.this.setResult(2, intent);
 								/**
-								 * 发??公钥
+								 * 发送公钥
 								 */
 								ConnectionManager.sendMsg(user.getIpAddress(),
 										ConnectionManager.getIpAddress() + ","
@@ -206,7 +210,7 @@ public class ScanActivity extends Activity {
 	}
 
 	/**
-	 * 绘制扫描动画的线??
+	 * 绘制扫描动画的线程
 	 * 
 	 * @author ccz
 	 * 

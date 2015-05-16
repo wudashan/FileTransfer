@@ -116,20 +116,22 @@ public class DownloadTask {
 					fileInfoDAO.insertFileInfo(fileInfo);
 				}
 				// 设置buff
-				int bufferSize = 1024;
+				int bufferSize = 2080;
 				byte[] buffer = new byte[bufferSize];
+				byte[] result = null;
 				int len = -1;
 				long oldProgressBar = 0;
 				long progressBar = 0;
 				while ((len = dis.read(buffer)) != -1) {
 					// 若有数据可以读取，写入文件
 					try {
-						aesUtil.decrypt(buffer);
+						result = aesUtil.decrypt(buffer);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					raf.write(buffer, 0, len);
-					start += len;
+					raf.write(result, 0, result.length);
+					Log.i("DownloadTask", result.length+"");
+					start += result.length;
 					// long型防止数据溢出
 					progressBar = (long) start * 100
 							/ (long) fileInfo.getLength();

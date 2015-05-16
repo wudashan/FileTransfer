@@ -9,7 +9,12 @@ import javax.crypto.spec.SecretKeySpec;
 
 import android.annotation.SuppressLint;
 
+@SuppressLint("TrulyRandom")
 public class AESUtil {
+
+	private final static String HEX = "0123456789ABCDEF";
+	private final static int JELLY_BEAN_4_2 = 17;
+	private final static int JELLY_BEAN_4_3 = 18;
 
 	private static AESUtil aesUtil;
 	private static String seed;
@@ -23,44 +28,14 @@ public class AESUtil {
 			aesUtil = new AESUtil();
 		}
 		AESUtil.seed = seed;
-		System.out.println("对称加密密码：" + seed);
 		return aesUtil;
 	}
-	
+
 	public static AESUtil getInstance() {
 		if (aesUtil == null) {
 			aesUtil = new AESUtil();
 		}
 		return aesUtil;
-	}
-
-	/**
-	 * 加密调用的接口
-	 * 
-	 * @param seed
-	 * @param cleartext
-	 * @return
-	 * @throws Exception
-	 */
-	public synchronized byte[] encrypt(byte[] cleartext) throws Exception {
-		byte[] rawKey = getRawKey(seed.getBytes());
-		byte[] result = encrypt(rawKey, cleartext);
-		return toHex(result).getBytes();
-	}
-
-	/**
-	 * 解密调用的接口
-	 * 
-	 * @param seed
-	 * @param encrypted
-	 * @return
-	 * @throws Exception
-	 */
-	public synchronized byte[] decrypt(byte[] encrypted) throws Exception {
-		byte[] rawKey = getRawKey(seed.getBytes());
-		byte[] enc = toByte(new String(encrypted));
-		byte[] result = decrypt(rawKey, enc);
-		return result;
 	}
 
 	public String getSeed() {
@@ -72,36 +47,115 @@ public class AESUtil {
 		this.seed = seed;
 	}
 
+	/**
+	 * 加密
+	 * 
+	 * @param key
+	 *            密钥
+	 * @param src
+	 *            加密文本
+	 * @return
+	 * @throws Exception
+	 */
+	public byte[] encrypt(byte[] src) throws Exception {
+		byte[] rawKey = getRawKey(seed.getBytes());
+		byte[] result = encrypt(rawKey, src);
+		return toHex(result).getBytes();
+	}
+
+	/**
+	 * 解密
+	 * 
+	 * @param key
+	 *            密钥
+	 * @param encrypted
+	 *            待揭秘文本
+	 * @return
+	 * @throws Exception
+	 */
+	public byte[] decrypt(byte[] encrypted) throws Exception {
+		byte[] rawKey = getRawKey(seed.getBytes());
+		byte[] enc = toByte(new String(encrypted));
+		byte[] result = decrypt(rawKey, enc);
+		return result;
+	}
+
+	/**
+	 * 获取256位的加密密钥
+	 * 
+	 * @param seed
+	 * @return
+	 * @throws Exception
+	 */
 	@SuppressLint("TrulyRandom")
-	private byte[] encrypt(byte[] raw, byte[] clear) throws Exception {
-		SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
-		Cipher cipher = Cipher.getInstance("AES");
+	private static byte[] getRawKey(byte[] seed) throws Exception {
+		KeyGenerator kgen = KeyGenerator.getInstance("AES");
+		SecureRandom sr = null;
+		// 在4.2以上版本中，SecureRandom获取方式发生了改变
+		if (android.os.Build.VERSION.SDK_INT >= JELLY_BEAN_4_2) {
+			sr = SecureRandom.getInstance("SHA1PRNG", "Crypto");
+		} else {
+			sr = SecureRandom.getInstance("SHA1PRNG");
+		}
+		sr.setSeed(seed);
+		// 256 bits or 128 bits,192bits
+		kgen.init(256, sr);
+		SecretKey skey = kgen.generateKey();
+		byte[] raw = skey.getEncoded();
+		return raw;
+	}
+
+	/**
+	 * 真正的加密过程
+	 * 
+	 * @param key
+	 * @param src
+	 * @return
+	 * @throws Exception
+	 */
+	private byte[] encrypt(byte[] key, byte[] src) throws Exception {
+		SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
+		Cipher cipher = null;
+		if (android.os.Build.VERSION.SDK_INT >= JELLY_BEAN_4_3) {
+			cipher = Cipher.getInstance("AES/ECB/ZeroBytePadding");
+		} else {
+			cipher = Cipher.getInstance("AES");
+		}
 		cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
-		byte[] encrypted = cipher.doFinal(clear);
+		byte[] encrypted = cipher.doFinal(src);
 		return encrypted;
 	}
 
-	private String toHex(byte[] buf) {
-		final String HEX = "0123456789ABCDEF";
-		if (buf == null)
-			return "";
-		StringBuffer result = new StringBuffer(2 * buf.length);
-		for (int i = 0; i < buf.length; i++) {
-			result.append(HEX.charAt((buf[i] >> 4) & 0x0f)).append(
-					HEX.charAt(buf[i] & 0x0f));
+	/**
+	 * 真正的解密过程
+	 * 
+	 * @param key
+	 * @param encrypted
+	 * @return
+	 * @throws Exception
+	 */
+	private byte[] decrypt(byte[] key, byte[] encrypted) throws Exception {
+		SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
+		Cipher cipher = null;
+		if (android.os.Build.VERSION.SDK_INT >= JELLY_BEAN_4_3) {
+			cipher = Cipher.getInstance("AES/ECB/ZeroBytePadding");
+		} else {
+			cipher = Cipher.getInstance("AES");
 		}
-		return result.toString();
-	}
-
-	private byte[] decrypt(byte[] raw, byte[] encrypted) throws Exception {
-		SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
-		Cipher cipher = Cipher.getInstance("AES");
 		cipher.init(Cipher.DECRYPT_MODE, skeySpec);
 		byte[] decrypted = cipher.doFinal(encrypted);
 		return decrypted;
 	}
 
-	private byte[] toByte(String hexString) {
+	public static String toHex(String txt) {
+		return toHex(txt.getBytes());
+	}
+
+	public static String fromHex(String hex) {
+		return new String(toByte(hex));
+	}
+
+	public static byte[] toByte(String hexString) {
 		int len = hexString.length() / 2;
 		byte[] result = new byte[len];
 		for (int i = 0; i < len; i++)
@@ -110,20 +164,17 @@ public class AESUtil {
 		return result;
 	}
 
-	/**
-	 * 获取key
-	 * 
-	 * @param seed
-	 * @return
-	 * @throws Exception
-	 */
-	private byte[] getRawKey(byte[] seed) throws Exception {
-		KeyGenerator kgen = KeyGenerator.getInstance("AES");
-		SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
-		sr.setSeed(seed);
-		kgen.init(128, sr);
-		SecretKey skey = kgen.generateKey();
-		byte[] raw = skey.getEncoded();
-		return raw;
+	public static String toHex(byte[] buf) {
+		if (buf == null)
+			return "";
+		StringBuffer result = new StringBuffer(2 * buf.length);
+		for (int i = 0; i < buf.length; i++) {
+			appendHex(result, buf[i]);
+		}
+		return result.toString();
+	}
+
+	private static void appendHex(StringBuffer sb, byte b) {
+		sb.append(HEX.charAt((b >> 4) & 0x0f)).append(HEX.charAt(b & 0x0f));
 	}
 }
