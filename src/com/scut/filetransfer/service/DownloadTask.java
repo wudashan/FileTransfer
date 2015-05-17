@@ -123,17 +123,20 @@ public class DownloadTask {
 				//开始接收
 				while (true) {
 					int bufferSize = dis.readInt();
+					LogUtil.i("DownloadTask", "buff.length:"+bufferSize);
 					byte[] buffer = new byte[bufferSize];
 					len = dis.read(buffer);
 					// 若无数据可以读取，跳出循环
 					if (len == -1) {
 						break;
 					}
-					try {
-						result = aesUtil.decrypt(buffer);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+//					try {
+//						result = aesUtil.decrypt(buffer);
+//					} catch (Exception e) {
+//						e.printStackTrace();
+//					}
+					result = buffer;
+					LogUtil.i("DownloadTask", "result.length:"+result.length);
 					raf.write(result, 0, result.length);
 					start += result.length;
 					// long型防止数据溢出
@@ -162,6 +165,7 @@ public class DownloadTask {
 						
 						// 如果是暂停，则陷入无线循环
 						while (isPause) {
+							
 						}
 						
 						// 点击继续下载，更新数据库
@@ -186,6 +190,7 @@ public class DownloadTask {
 				try {
 					if (socket !=null) {
 						socket.close();
+						LogUtil.i("DownloadTask", "socket is closed...");
 					}
 					if (dos != null) {
 						dos.close();

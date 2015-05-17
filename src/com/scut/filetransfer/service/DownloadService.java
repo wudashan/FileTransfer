@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.scut.filetransfer.bean.FileInfo;
+import com.scut.filetransfer.util.LogUtil;
 
 import android.app.Service;
 import android.content.Intent;
@@ -29,12 +30,15 @@ public class DownloadService extends Service{
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		LogUtil.i("DownloadService", "onDestroy()");
 	}
 	
 	
 	//启动Service
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		
+		LogUtil.i("DownloadService", "onStartCommand(Intent intent, int flags, int startId)");
 		
 		//当被进程杀死时，会自动调用onStartCommand方法，防止空指针异常
 		if (intent != null) {
@@ -65,8 +69,6 @@ public class DownloadService extends Service{
 		}else{
 			
 		}
-		
-		
 		return super.onStartCommand(intent, flags, startId);
 	}
 }

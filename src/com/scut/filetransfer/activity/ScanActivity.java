@@ -53,14 +53,9 @@ public class ScanActivity extends Activity {
 		window.setFlags(flag, flag);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.scan_activity);
-		if (isNetwork()) {
 			initView();
 			startScan();
 			rsaUtil = RSAUtil.getInstance();
-		} else {
-			Toast.makeText(this, R.string.no_wifi, Toast.LENGTH_SHORT).show();
-			finish();
-		}
 	}
 
 	/**
