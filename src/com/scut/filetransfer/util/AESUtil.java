@@ -98,7 +98,6 @@ public class AESUtil {
 			sr = SecureRandom.getInstance("SHA1PRNG");
 		}
 		sr.setSeed(seed);
-		// 256 bits or 128 bits,192bits
 		kgen.init(256, sr);
 		SecretKey skey = kgen.generateKey();
 		byte[] raw = skey.getEncoded();

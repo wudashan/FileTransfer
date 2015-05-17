@@ -101,28 +101,25 @@ public class UploadTask {
 				fis = new FileInputStream(filePath);
 				fis.skip((long) start);
 				dis = new DataInputStream(fis);
-				
+				byte[] result = null ;
 				while ((len = dis.read(bufArray)) != -1) {
 					try {
-						byte[] result = aesUtil.encrypt(bufArray);
-						//System.err.println("≥§∂»£∫" + result.length);
-						//System.err.println("√‹‘ø£∫" + aesUtil.getSeed());
-						Log.i("UploadTask", result.length+"");
-						dos.write(result, 0, result.length);
+						result = aesUtil.encrypt(bufArray);
+						//Log.i("UploadTask", result.length+"");
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+					dos.write(result, 0, result.length);
 				}
-				dos.flush();
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
 				try {
-					if (ss != null) {
-						ss.close();
-					}
+//					if (ss != null) {
+//						ss.close();
+//					}
 					if (socket != null) {
 						socket.close();
 					}
