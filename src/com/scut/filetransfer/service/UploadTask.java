@@ -33,10 +33,10 @@ public class UploadTask {
 	private boolean isPause;
 	private AESUtil aesUtil;
 	public UploadThread uploadThread;
-	//所有线程公用一个ServerSocket
-	public static ServerSocket socketServer ;
-	
-	static{
+	// 所有线程公用一个ServerSocket
+	public static ServerSocket socketServer;
+
+	static {
 		try {
 			socketServer = new ServerSocket(PortUtil.PORT);
 		} catch (IOException e) {
@@ -74,9 +74,8 @@ public class UploadTask {
 	 */
 	class UploadThread extends Thread {
 
-
 		public void run() {
-			
+
 			File file = new File(filePath);
 			ServerSocket ss = null;
 			Socket socket = null;
@@ -101,44 +100,38 @@ public class UploadTask {
 				fis = new FileInputStream(filePath);
 				fis.skip((long) start);
 				dis = new DataInputStream(fis);
-				byte[] result = null ;
 				while ((len = dis.read(bufArray)) != -1) {
 					try {
-						//result = aesUtil.encrypt(bufArray);
-						//Log.i("UploadTask", result.length+"");
-						result = aesUtil.encrypt(bufArray);
-						//System.err.println("长度：" + result.length);
-						//System.err.println("密钥：" + aesUtil.getSeed());
-						//Log.i("UploadTask", result.length+"");
+						byte[] result = aesUtil.encrypt(bufArray);
 						dos.writeInt(result.length);
 						dos.write(result, 0, result.length);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					//dos.write(result, 0, result.length);
 				}
+				dos.writeInt(1);
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
 				try {
-//					if (ss != null) {
-//						ss.close();
-//					}
+					// if (ss != null) {
+					// ss.close();
+					// }
 					if (socket != null) {
 						socket.close();
 					}
 					if (dos != null) {
 						dos.close();
 					}
-					if (dis !=null) {
+					if (dis != null) {
 						dis.close();
 					}
-					if (disClient !=null) {
+					if (disClient != null) {
 						disClient.close();
 					}
-					if (fis !=null) {
+					if (fis != null) {
 						fis.close();
 					}
 				} catch (IOException e) {
