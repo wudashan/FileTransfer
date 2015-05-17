@@ -97,6 +97,7 @@ public class DownloadTask {
 				}
 				// 告诉服务器文件开始传输的位置
 				dos.writeInt(fileInfo.getStart());
+				
 				dos.flush();
 				// 设置文件写入位置
 				int start = fileInfo.getStart();
@@ -116,21 +117,25 @@ public class DownloadTask {
 					fileInfoDAO.insertFileInfo(fileInfo);
 				}
 				// 设置buff
-				int bufferSize = 2080;
-				byte[] buffer = new byte[bufferSize];
 				byte[] result = null;
 				int len = -1;
 				long oldProgressBar = 0;
 				long progressBar = 0;
-				while ((len = dis.read(buffer)) != -1) {
-					// 若有数据可以读取，写入文件
+				while (true) {
+					int bufferSize = dis.readInt();
+					byte[] buffer = new byte[bufferSize];
+					len = dis.read(buffer);
+					// 若无数据可以读取，跳出循环
+					if (len == -1) {
+						break;
+					}
 					try {
 						result = aesUtil.decrypt(buffer);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 					raf.write(result, 0, result.length);
-					Log.i("DownloadTask", result.length+"");
+					//Log.i("DownloadTask", result.length+"");
 					start += result.length;
 					// long型防止数据溢出
 					progressBar = (long) start * 100
@@ -144,8 +149,8 @@ public class DownloadTask {
 						Intent intent = new Intent(
 								DownloadService.ACTION_UPDATE);
 						intent.putExtra("fileInfo", fileInfo);
-						System.out.println(fileInfo.getFileName() + "已下载"
-								+ progressBar + "%");
+						Log.i("DownloadTask", fileInfo.getFileName() + "已下载"+ progressBar + "%");
+						//System.out.println(fileInfo.getFileName() + "已下载"+ progressBar + "%");
 						context.sendBroadcast(intent);
 					}
 					// 在点击暂停时，保存下载进度到数据库
@@ -172,7 +177,8 @@ public class DownloadTask {
 						fileInfo.getPort(), fileInfo.getId(), 100,
 						fileInfo.getStart(), fileInfo.getLength(),
 						fileInfo.getFileName(), "已完成");
-				System.out.println("DownloadTask finished:" + fileInfo);
+				Log.i("DownloadTask", "finished:" + fileInfo);
+				//System.out.println("DownloadTask finished:" + fileInfo);
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			} catch (IOException e) {

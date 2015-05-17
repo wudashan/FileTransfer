@@ -104,12 +104,18 @@ public class UploadTask {
 				byte[] result = null ;
 				while ((len = dis.read(bufArray)) != -1) {
 					try {
-						result = aesUtil.encrypt(bufArray);
+						//result = aesUtil.encrypt(bufArray);
 						//Log.i("UploadTask", result.length+"");
+						result = aesUtil.encrypt(bufArray);
+						//System.err.println("≥§∂»£∫" + result.length);
+						//System.err.println("√‹‘ø£∫" + aesUtil.getSeed());
+						//Log.i("UploadTask", result.length+"");
+						dos.writeInt(result.length);
+						dos.write(result, 0, result.length);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					dos.write(result, 0, result.length);
+					//dos.write(result, 0, result.length);
 				}
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
