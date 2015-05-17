@@ -16,6 +16,7 @@ import com.scut.filetransfer.bean.FileInfo;
 import com.scut.filetransfer.database.FileInfoDAO;
 import com.scut.filetransfer.database.FileInfoDAOImpl;
 import com.scut.filetransfer.util.AESUtil;
+import com.scut.filetransfer.util.LogUtil;
 
 /**
  * 下载任务类
@@ -82,10 +83,11 @@ public class DownloadTask {
 		public void run() {
 
 			try {
+				Log.i("DownloadTask", "start download...");
 				socket = new Socket(fileInfo.getIP(), fileInfo.getPort());
 				dis = new DataInputStream(socket.getInputStream());
 				dos = new DataOutputStream(socket.getOutputStream());
-				// 这里从服务器获取文件名和长度
+				// 这里从发送端获取文件名和长度
 				fileInfo.setFileName(dis.readUTF());
 				fileInfo.setLength(dis.readInt());
 				// 从数据库中查找是否存在该文件，并且未下完（断点续传）
@@ -93,7 +95,7 @@ public class DownloadTask {
 						fileInfo.getFileName())) {
 					fileInfo = fileInfoDAO.getFileInfo(fileInfo.getIP(),
 							fileInfo.getPort(), fileInfo.getFileName());
-					Log.i("DownloadTask", fileInfo.toString());
+					LogUtil.i("DownloadTask", fileInfo.toString());
 				}
 				// 告诉服务器文件开始传输的位置
 				dos.writeInt(fileInfo.getStart());
@@ -104,23 +106,21 @@ public class DownloadTask {
 				File file = new File(DownloadService.DOWNLOAD_PATH,
 						fileInfo.getFileName());
 				raf = new RandomAccessFile(file, "rwd");
-				// 第一次创建文件
+				// 若第一次创建文件，设置文件大小，插入数据库
 				if (!fileInfoDAO.isExists(fileInfo.getIP(), fileInfo.getPort(),
 						fileInfo.getFileName())) {
 					raf.setLength(fileInfo.getLength());
-				}
-				// 文件断点续传和暂停回复的写入位置
-				raf.seek(start);
-				// 插入数据库
-				if (!fileInfoDAO.isExists(fileInfo.getIP(), fileInfo.getPort(),
-						fileInfo.getId())) {
+					fileInfo.setStatus("开始下载");
 					fileInfoDAO.insertFileInfo(fileInfo);
 				}
-				// 设置buff
+				// 文件断点续传写入位置
+				raf.seek(start);
+				// 初始化buff
 				byte[] result = null;
 				int len = -1;
 				long oldProgressBar = 0;
 				long progressBar = 0;
+				//开始接收
 				while (true) {
 					int bufferSize = dis.readInt();
 					byte[] buffer = new byte[bufferSize];
@@ -135,7 +135,6 @@ public class DownloadTask {
 						e.printStackTrace();
 					}
 					raf.write(result, 0, result.length);
-					//Log.i("DownloadTask", result.length+"");
 					start += result.length;
 					// long型防止数据溢出
 					progressBar = (long) start * 100
@@ -149,8 +148,7 @@ public class DownloadTask {
 						Intent intent = new Intent(
 								DownloadService.ACTION_UPDATE);
 						intent.putExtra("fileInfo", fileInfo);
-						Log.i("DownloadTask", fileInfo.getFileName() + "已下载"+ progressBar + "%");
-						//System.out.println(fileInfo.getFileName() + "已下载"+ progressBar + "%");
+						LogUtil.i("DownloadTask", fileInfo.getFileName() + "已下载"+ progressBar + "%");
 						context.sendBroadcast(intent);
 					}
 					// 在点击暂停时，保存下载进度到数据库
@@ -160,11 +158,13 @@ public class DownloadTask {
 								fileInfo.getFinished(), fileInfo.getStart(),
 								fileInfo.getLength(), fileInfo.getFileName(),
 								"停止下载");
-						System.out.println("DownloadTask isPause:" + fileInfo);
-						// 如果是短暂停，则陷入无线循环
+						LogUtil.i("DownloadTask","DownloadTask isPause:" + fileInfo);
+						
+						// 如果是暂停，则陷入无线循环
 						while (isPause) {
 						}
-						// 恢复下载，更新数据库
+						
+						// 点击继续下载，更新数据库
 						fileInfoDAO.updateFileInfo(fileInfo.getIP(),
 								fileInfo.getPort(), fileInfo.getId(),
 								fileInfo.getFinished(), fileInfo.getStart(),
@@ -177,8 +177,7 @@ public class DownloadTask {
 						fileInfo.getPort(), fileInfo.getId(), 100,
 						fileInfo.getStart(), fileInfo.getLength(),
 						fileInfo.getFileName(), "已完成");
-				Log.i("DownloadTask", "finished:" + fileInfo);
-				//System.out.println("DownloadTask finished:" + fileInfo);
+				LogUtil.i("DownloadTask", "finished:" + fileInfo);
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
