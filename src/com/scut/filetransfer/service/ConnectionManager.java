@@ -8,7 +8,9 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -16,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.http.conn.util.InetAddressUtils;
 
 import com.scut.filetransfer.R;
+import com.scut.filetransfer.util.WifiUtil;
 
 import android.app.Activity;
 import android.content.Context;
@@ -50,6 +53,7 @@ public class ConnectionManager {
 		return connectionManager;
 	}
 
+	@SuppressWarnings("static-access")
 	private ConnectionManager(Context context) {
 		this.context = context;
 		locationManager = new LocationManager(context);
@@ -57,9 +61,9 @@ public class ConnectionManager {
 
 	public static int SERVERPORT = 8878;
 	private String preIP;
-	private Context context;
+	private static Context context;
 
-	public static  void sendMsg(String ip, String msg) {
+	public static void sendMsg(String ip, String msg) {
 		Socket socket = null;
 		try {
 			socket = new Socket(ip, SERVERPORT);
@@ -124,33 +128,45 @@ public class ConnectionManager {
 	}
 
 	public static String getLocalAddress() {
-		String ipaddress = "";
 		String miui = getSystemProperty("ro.miui.ui.version.name");
+		WifiUtil wifiUtil = new WifiUtil(context);
+		List<String> ipList = getLocalAddressList();
+		int index = ipList.size() - 1;
+		if (miui != null && !miui.equals("")) {
+			index = index - 1;
+			if (wifiUtil.isWifiApEnabled() && wifiUtil.isMobileConnected())
+				index = index - 1;
+		} else if (wifiUtil.isWifiApEnabled() && wifiUtil.isMobileConnected()) {
+			index = index - 1;
+		}
+		return ipList.get(index);
+	}
+
+	private static List<String> getLocalAddressList() {
+		List<String> ipList = new ArrayList<String>();
+		String ipaddress = "";
+
 		try {
 			Enumeration<NetworkInterface> en = NetworkInterface
 					.getNetworkInterfaces();
 			InetAddress ip = null;
-			InetAddress preip;
 			while (en.hasMoreElements()) {
 				NetworkInterface networks = en.nextElement();
 				Enumeration<InetAddress> address = networks.getInetAddresses();
 				while (address.hasMoreElements()) {
-					preip = ip;
 					ip = address.nextElement();
 					if (!ip.isLoopbackAddress()
 							&& InetAddressUtils.isIPv4Address(ip
 									.getHostAddress())) {
-						if (miui == null || miui.equals(""))
-							ipaddress = ip.getHostAddress();
-						else
-							ipaddress = preip.getHostAddress();
+						ipaddress = ip.getHostAddress();
+						ipList.add(ipaddress);
 					}
 				}
 			}
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
-		return ipaddress;
+		return ipList;
 	}
 
 	public static String getIpAddress() {

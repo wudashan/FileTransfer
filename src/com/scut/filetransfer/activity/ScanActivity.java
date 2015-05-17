@@ -8,8 +8,6 @@ import com.scut.filetransfer.util.RSAUtil;
 import com.scut.filetransfer.util.RandomNum;
 import com.scut.filetransfer.view.CircleImageView;
 import com.scut.filetransfer.view.ScanView;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -26,7 +24,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 public class ScanActivity extends Activity {
 
@@ -53,14 +50,9 @@ public class ScanActivity extends Activity {
 		window.setFlags(flag, flag);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.scan_activity);
-		if (isNetwork()) {
-			initView();
-			startScan();
-			rsaUtil = RSAUtil.getInstance();
-		} else {
-			Toast.makeText(this, R.string.no_wifi, Toast.LENGTH_SHORT).show();
-			finish();
-		}
+		initView();
+		startScan();
+		rsaUtil = RSAUtil.getInstance();
 	}
 
 	/**
@@ -210,15 +202,6 @@ public class ScanActivity extends Activity {
 		int y = new Random().nextInt(height - 115);
 		Point point = new Point(x, y);
 		return point;
-	}
-
-	private boolean isNetwork() {
-		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-		if (networkInfo == null || !networkInfo.isAvailable())
-			return true;
-		else
-			return false;
 	}
 
 	/**

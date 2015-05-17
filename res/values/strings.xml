@@ -2,14 +2,13 @@
 <resources>
 
     <string name="app_name">微传</string>
-    
     <string name="send">发送</string>
     <string name="receive">接收</string>
     <string name="bluetooth">蓝牙</string>
     <string name="open_bluetooth">打开蓝牙</string>
     <string name="is_open_bluetooth">蓝牙未打开，是否打开？</string>
     <string name="exit">退出</string>
-    <string name="no_wifi">请连接到无线网络</string>
+    <string name="no_wifi">请连接到无线网络或开启便携式热点</string>
     <string name="comfirm">确定</string>
     <string name="cancel">取消</string>
     <string name="ip_ddress">IP地址：</string>

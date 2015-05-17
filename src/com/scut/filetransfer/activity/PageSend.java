@@ -1,4 +1,5 @@
 package com.scut.filetransfer.activity;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,9 +10,12 @@ import com.scut.filetransfer.bean.FileInfo;
 import com.scut.filetransfer.service.ConnectionManager;
 import com.scut.filetransfer.service.UploadService;
 import com.scut.filetransfer.util.PortUtil;
+import com.scut.filetransfer.util.WifiUtil;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -24,7 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class PageSend extends Fragment implements OnClickListener {
-	
+
 	private LinearLayout searchFriend, showFile, startSend;
 	private TextView userToSend, fileToSend;
 	private String fileName, filePath;
@@ -34,6 +38,7 @@ public class PageSend extends Fragment implements OnClickListener {
 	private String sendIp;
 	private String tempSendIp;
 	private String tempfileName;
+	private WifiUtil wifiUtil;
 	private Context mContext;
 
 	@Override
@@ -44,7 +49,7 @@ public class PageSend extends Fragment implements OnClickListener {
 
 		fileToSend = (TextView) view.findViewById(R.id.fileToSend);
 		userToSend = (TextView) view.findViewById(R.id.userToSend);
-		startSend =  (LinearLayout) view.findViewById(R.id.startSend);
+		startSend = (LinearLayout) view.findViewById(R.id.startSend);
 		showFile = (LinearLayout) view.findViewById(R.id.showFile);
 		searchFriend = (LinearLayout) view.findViewById(R.id.searchFriend);
 		searchFriend.setOnClickListener(this);
@@ -54,13 +59,12 @@ public class PageSend extends Fragment implements OnClickListener {
 		listSend = new ArrayList<FileInfo>();
 		adapter = new SendAdapter(listSend, getActivity(), R.layout.item_send);
 		lvSendMission.setAdapter(adapter);
-		mContext = FileTransferApplication.getInstance().getApplicationContext();
+		mContext = FileTransferApplication.getInstance()
+				.getApplicationContext();
+		wifiUtil = new WifiUtil(mContext);
 		return view;
 	}
 
-	
-	
-	
 	@Override
 	public void onClick(View arg0) {
 		switch (arg0.getId()) {
@@ -69,33 +73,39 @@ public class PageSend extends Fragment implements OnClickListener {
 			startActivityForResult(intent, 1);
 			break;
 		case R.id.startSend:
-			
+
 			if (sendIp == null || sendIp.equals("")) {
-				Toast.makeText(mContext, mContext.getString(R.string.please_select_who_to_send), Toast.LENGTH_LONG).show();
+				Toast.makeText(mContext,
+						mContext.getString(R.string.please_select_who_to_send),
+						Toast.LENGTH_LONG).show();
 				break;
 			}
 			if (fileName == null) {
-				Toast.makeText(mContext, mContext.getString(R.string.please_select_file), Toast.LENGTH_LONG).show();
+				Toast.makeText(mContext,
+						mContext.getString(R.string.please_select_file),
+						Toast.LENGTH_LONG).show();
 				break;
 			}
-			
+
 			if (tempfileName == fileName && sendIp == tempSendIp) {
-				//同一文件，用户重复点击发送button，不予理会
-				Toast.makeText(mContext, mContext.getString(R.string.please_do_not_click_again), Toast.LENGTH_LONG).show();
+				// 同一文件，用户重复点击发送button，不予理会
+				Toast.makeText(mContext,
+						mContext.getString(R.string.please_do_not_click_again),
+						Toast.LENGTH_LONG).show();
 				break;
 			}
-			
+
 			if (sendIp != null && !sendIp.equals("") && fileName != null) {
 				new Thread() {
 					public void run() {
 						ConnectionManager.sendMsg(sendIp, "start,"
-								+ ConnectionManager.getIpAddress() + "," + fileName);
+								+ ConnectionManager.getIpAddress() + ","
+								+ fileName);
 					};
 				}.start();
 
-				//判断端口是否被占用
-				
-				
+				// 判断端口是否被占用
+
 				// 这里设置发送端的IP和端口号
 				tempfileName = fileName;
 				tempSendIp = sendIp;
@@ -114,13 +124,17 @@ public class PageSend extends Fragment implements OnClickListener {
 				i.putExtra("fileInfo", fileInfo);
 				getActivity().startService(i);
 				fileToSend.setText(fileName);
-
 			}
 			break;
 		case R.id.searchFriend:
-			MainActivity.server.clear();
-			Intent intent2 = new Intent(getActivity(), ScanActivity.class);
-			startActivityForResult(intent2, 2);
+			if (!wifiUtil.isWifiApEnabled() && !wifiUtil.isWifiConnected())
+				Toast.makeText(mContext, R.string.no_wifi, Toast.LENGTH_SHORT)
+						.show();
+			else {
+				MainActivity.server.clear();
+				Intent intent2 = new Intent(getActivity(), ScanActivity.class);
+				startActivityForResult(intent2, 2);
+			}
 			break;
 		default:
 			break;
