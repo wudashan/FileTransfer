@@ -110,7 +110,7 @@ public class ReceiveAdapter extends CommonAdapter<FileInfo> {
 	 * @param position
 	 */
 	public void myNotifyDataSetChanged(int position) {
-		System.out.println("MyAdapter myNotifyDataSetChanged()");
+		//System.out.println("MyAdapter myNotifyDataSetChanged()");
 		//得到第1个可显示控件的位置,记住是第1个可显示控件噢。而不是第1个控件
 		int visiblePosition = lv_main.getFirstVisiblePosition(); 
 		//得到你需要更新item的View,若控件不在显示范围，则不进行更新

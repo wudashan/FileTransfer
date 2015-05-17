@@ -107,7 +107,8 @@ public class UploadTask {
 						byte[] result = aesUtil.encrypt(bufArray);
 						//System.err.println("≥§∂»£∫" + result.length);
 						//System.err.println("√‹‘ø£∫" + aesUtil.getSeed());
-						Log.i("UploadTask", result.length+"");
+						//Log.i("UploadTask", result.length+"");
+						dos.writeInt(result.length);
 						dos.write(result, 0, result.length);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -120,9 +121,9 @@ public class UploadTask {
 				e.printStackTrace();
 			} finally {
 				try {
-					if (ss != null) {
-						ss.close();
-					}
+//					if (ss != null) {
+//						ss.close();
+//					}
 					if (socket != null) {
 						socket.close();
 					}
