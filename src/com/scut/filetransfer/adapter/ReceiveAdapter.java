@@ -41,7 +41,12 @@ public class ReceiveAdapter extends CommonAdapter<FileInfo> {
 		tvFileName.setText(fileInfo.getFileName());
 		pbProgress.setMax(100);
 		pbProgress.setProgress(fileInfo.getFinished());
-		btnButton.setText(fileInfo.getStatus());
+		//暂停和继续，用户只用按一次
+		if ("停止下载".equals(fileInfo.getStatus())) {
+			btnButton.setText("继续下载");
+		}else {
+			btnButton.setText(fileInfo.getStatus());
+		}
 		btnButton.setVisibility(Button.VISIBLE);
 		btnButton.setBackgroundColor(Color.LTGRAY);
 		

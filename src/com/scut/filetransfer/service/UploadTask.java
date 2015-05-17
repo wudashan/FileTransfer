@@ -16,6 +16,7 @@ import java.net.UnknownHostException;
 import com.scut.filetransfer.activity.PageSend;
 import com.scut.filetransfer.bean.FileInfo;
 import com.scut.filetransfer.util.AESUtil;
+import com.scut.filetransfer.util.LogUtil;
 import com.scut.filetransfer.util.PortUtil;
 
 /**
@@ -75,7 +76,7 @@ public class UploadTask {
 	class UploadThread extends Thread {
 
 		public void run() {
-
+			LogUtil.i("UploadTask", "start upload...");
 			File file = new File(filePath);
 			ServerSocket ss = null;
 			Socket socket = null;
@@ -103,12 +104,15 @@ public class UploadTask {
 				while ((len = dis.read(bufArray)) != -1) {
 					try {
 						byte[] result = aesUtil.encrypt(bufArray);
+						LogUtil.i("UploadTask", "result.length:"+result.length);
 						dos.writeInt(result.length);
+						dos.flush();
 						dos.write(result, 0, result.length);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
+				//Ω· ¯±Í÷æ
 				dos.writeInt(1);
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
