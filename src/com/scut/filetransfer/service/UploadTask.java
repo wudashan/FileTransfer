@@ -102,8 +102,17 @@ public class UploadTask {
 				fis.skip((long) start);
 				dis = new DataInputStream(fis);
 				while ((len = dis.read(bufArray)) != -1) {
+//					if (socket.isClosed()) {
+//						break;
+//					}
+//					len = dis.read(bufArray);
+//					if (len == -1) {
+//						break;
+//					}
 					try {
-						byte[] result = aesUtil.encrypt(bufArray);
+						//byte[] result = aesUtil.encrypt(bufArray);
+						byte[] result = bufArray;
+						LogUtil.i("UploadTask", "buff.length:"+bufArray.length);
 						LogUtil.i("UploadTask", "result.length:"+result.length);
 						dos.writeInt(result.length);
 						dos.flush();
@@ -113,6 +122,8 @@ public class UploadTask {
 					}
 				}
 				//Ω· ¯±Í÷æ
+//				if (!socket.isClosed()) {
+//				}
 				dos.writeInt(1);
 			} catch (UnknownHostException e) {
 				e.printStackTrace();

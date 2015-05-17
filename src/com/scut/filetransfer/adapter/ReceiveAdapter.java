@@ -42,23 +42,23 @@ public class ReceiveAdapter extends CommonAdapter<FileInfo> {
 		pbProgress.setMax(100);
 		pbProgress.setProgress(fileInfo.getFinished());
 		//暂停和继续，用户只用按一次
-		if ("停止下载".equals(fileInfo.getStatus())) {
-			btnButton.setText("继续下载");
-		}else {
-			btnButton.setText(fileInfo.getStatus());
-		}
+//		if ("停止下载".equals(fileInfo.getStatus())) {
+//			btnButton.setText("继续下载");
+//		}else {
+//		}
+		btnButton.setText(fileInfo.getStatus());
 		btnButton.setVisibility(Button.VISIBLE);
 		btnButton.setBackgroundColor(Color.LTGRAY);
 		
 		//若文件传输完成，设置button不可见，并解决复用button的问题
-		if (fileInfo.getFinished() == 100 && listButton.contains(holder.getPosition())) {
+		if (fileInfo.getFinished() >= 100 && listButton.contains(holder.getPosition())) {
 			//btnButton.setVisibility(Button.INVISIBLE);
 			btnButton.setBackgroundColor(Color.TRANSPARENT);
 			btnButton.setTextColor(Color.BLACK);
 			btnButton.setText("已完成");
 			btnButton.setOnClickListener(null);
 		}
-		if (fileInfo.getFinished() == 100 && "已完成".equals(btnButton.getText().toString())) {
+		if (fileInfo.getFinished() >= 100 && "已完成".equals(btnButton.getText().toString())) {
 			btnButton.setBackgroundColor(Color.TRANSPARENT);
 			btnButton.setTextColor(Color.BLACK);
 			btnButton.setText("已完成");
@@ -132,7 +132,7 @@ public class ReceiveAdapter extends CommonAdapter<FileInfo> {
 		pbProgress.setProgress(fileInfo.getFinished());
 		tvFileName.setText(fileInfo.getFileName());
 		
-		if (fileInfo.getFinished() == 100) {
+		if (fileInfo.getFinished() >= 100) {
 			btnButton.setBackgroundColor(Color.TRANSPARENT);
 			btnButton.setTextColor(Color.BLACK);
 			btnButton.setText("已完成");
