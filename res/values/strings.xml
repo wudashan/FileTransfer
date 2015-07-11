@@ -43,7 +43,13 @@
     <string name="start_send">开始发送</string>
     <string name="file_to_send">待发送文件</string>
     <string name="list_send">发送列表</string>
+    <string name="user">用户</string>
+    <string name="user_name">用户名：</string>
+    <string name="user_email">邮箱：</string>
+    <string name="not_write">暂未填写</string>
     <string name="user_to_send">发送对象</string>
     <string name="list_is_empty">传输列表为空</string>
+    <string name="write_user_email">填写邮箱</string>
+    <string name="write_user_name">填写用户名</string>
 
 </resources>

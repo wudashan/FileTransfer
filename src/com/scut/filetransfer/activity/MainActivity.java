@@ -26,6 +26,7 @@ public class MainActivity extends FragmentActivity implements
 	private ViewPager viewPager;
 	private PageSend pageSend;
 	private static PageLoad pageLoad;
+	private PageUser pageUser;
 	private PageBlueTooth pageBlueTooth;
 	private FragmentPagerAdapter adapter;
 	private FileInfoDAO fileInfoDAO;
@@ -33,6 +34,7 @@ public class MainActivity extends FragmentActivity implements
 	private ChangeColorIconWithText one;
 	private ChangeColorIconWithText two;
 	private ChangeColorIconWithText three;
+	private ChangeColorIconWithText four;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +57,16 @@ public class MainActivity extends FragmentActivity implements
 		one = (ChangeColorIconWithText) findViewById(R.id.send);
 		two = (ChangeColorIconWithText) findViewById(R.id.load);
 		three = (ChangeColorIconWithText) findViewById(R.id.blueTooth);
+		four = (ChangeColorIconWithText) findViewById(R.id.user);
 
 		listChangeColorIconWithTexts.add(one);
 		listChangeColorIconWithTexts.add(two);
 		listChangeColorIconWithTexts.add(three);
+		listChangeColorIconWithTexts.add(four);
 		pageSend = new PageSend();
 		pageLoad = new PageLoad();
 		pageBlueTooth = new PageBlueTooth();
+		pageUser = new PageUser();
 	}
 
 	private void initDatas() {
@@ -72,7 +77,7 @@ public class MainActivity extends FragmentActivity implements
 
 			@Override
 			public int getCount() {
-				return 3;
+				return 4;
 			}
 
 			@Override
@@ -84,6 +89,8 @@ public class MainActivity extends FragmentActivity implements
 					return pageLoad;
 				case 2:
 					return pageBlueTooth;
+				case 3:
+					return pageUser;
 				default:
 					return null;
 				}
@@ -98,6 +105,7 @@ public class MainActivity extends FragmentActivity implements
 		one.setOnClickListener(this);
 		two.setOnClickListener(this);
 		three.setOnClickListener(this);
+		four.setOnClickListener(this);
 	}
 
 	@Override
@@ -170,6 +178,10 @@ public class MainActivity extends FragmentActivity implements
 		case R.id.blueTooth:
 			listChangeColorIconWithTexts.get(2).setIconAlpha(1.0f);
 			viewPager.setCurrentItem(2, false);
+			break;
+		case R.id.user:
+			listChangeColorIconWithTexts.get(3).setIconAlpha(1.0f);
+			viewPager.setCurrentItem(3, false);
 			break;
 		default:
 			break;
