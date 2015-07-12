@@ -3,16 +3,12 @@ package com.scut.filetransfer.activity;
 
 import com.scut.filetransfer.R;
 import com.scut.filetransfer.util.EmailUtil;
-import com.scut.filetransfer.util.LogUtil;
-import com.scut.filetransfer.util.MultiMailsender;
-import com.scut.filetransfer.util.MultiMailsender.MultiMailSenderInfo;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,16 +51,10 @@ public class PageUser extends Fragment implements OnClickListener{
 		llUserEmail.setOnClickListener(this);
 		
 		//·¢ËÍÓÊ¼þ
-		new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				String senderEmail = sharedPreferences.getString("userEmail", "null");
-				if (!senderEmail.equals("null")) {
-					EmailUtil.sendEmail(senderEmail, "8888"); 
-				}
-			}
-		}).start();
+		String senderEmail = sharedPreferences.getString("userEmail", "null");
+		if (!senderEmail.equals("null")) {
+			EmailUtil.sendEmail(senderEmail, "8888"); 
+		}
 		
 		
 		return view;
