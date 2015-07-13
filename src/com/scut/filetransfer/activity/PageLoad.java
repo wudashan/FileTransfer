@@ -148,6 +148,7 @@ public class PageLoad extends Fragment {
 			if (DownloadService.ACTION_UPDATE.equals(intent.getAction())) {
 				FileInfo fileInfo = new FileInfo();
 				fileInfo = (FileInfo) intent.getSerializableExtra("fileInfo");
+				int speed = intent.getIntExtra("speed", 0);
 				int finished = fileInfo.getFinished();
 				String fileName = fileInfo.getFileName();
 				int position = fileInfo.getId();

@@ -50,11 +50,11 @@ public class PageUser extends Fragment implements OnClickListener{
 		llUserInfo.setOnClickListener(this);
 		llUserEmail.setOnClickListener(this);
 		
-		//发送邮件
-		String senderEmail = sharedPreferences.getString("userEmail", "null");
-		if (!senderEmail.equals("null")) {
-			EmailUtil.sendEmail(senderEmail, "8888"); 
-		}
+//		发送邮件
+//		String senderEmail = sharedPreferences.getString("userEmail", "null");
+//		if (!senderEmail.equals("null")) {
+//			EmailUtil.sendEmail(senderEmail, "8888"); 
+//		}
 		
 		
 		return view;

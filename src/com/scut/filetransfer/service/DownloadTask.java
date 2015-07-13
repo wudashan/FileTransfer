@@ -147,10 +147,12 @@ public class DownloadTask {
 					fileInfo.setStart(start);
 					// 把下载进度发送广播给Activity
 					if (oldProgressBar != progressBar) {
+						//int speed = (int) (progressBar - oldProgressBar);
 						oldProgressBar = progressBar;
 						Intent intent = new Intent(
 								DownloadService.ACTION_UPDATE);
 						intent.putExtra("fileInfo", fileInfo);
+						//intent.putExtra("speed", speed);
 						LogUtil.i("DownloadTask", fileInfo.getFileName() + "已下载"+ progressBar + "%");
 						context.sendBroadcast(intent);
 					}

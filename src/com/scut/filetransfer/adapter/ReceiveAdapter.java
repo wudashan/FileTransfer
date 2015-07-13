@@ -37,15 +37,11 @@ public class ReceiveAdapter extends CommonAdapter<FileInfo> {
 		TextView  tvFileName = holder.getView(R.id.tvFileName);
 		final Button btnButton = holder.getView(R.id.btnButton);
 		ProgressBar pbProgress = holder.getView(R.id.pbProgress);
+		//final TextView tvSpeed = holder.getView(R.id.tvSpeed);
 		
 		tvFileName.setText(fileInfo.getFileName());
 		pbProgress.setMax(100);
 		pbProgress.setProgress(fileInfo.getFinished());
-		//暂停和继续，用户只用按一次
-//		if ("停止下载".equals(fileInfo.getStatus())) {
-//			btnButton.setText("继续下载");
-//		}else {
-//		}
 		btnButton.setText(fileInfo.getStatus());
 		btnButton.setVisibility(Button.VISIBLE);
 		btnButton.setBackgroundColor(Color.LTGRAY);
@@ -57,12 +53,14 @@ public class ReceiveAdapter extends CommonAdapter<FileInfo> {
 			btnButton.setTextColor(Color.BLACK);
 			btnButton.setText("已完成");
 			btnButton.setOnClickListener(null);
+			//tvSpeed.setText("");
 		}
 		if (fileInfo.getFinished() >= 100 && "已完成".equals(btnButton.getText().toString())) {
 			btnButton.setBackgroundColor(Color.TRANSPARENT);
 			btnButton.setTextColor(Color.BLACK);
 			btnButton.setText("已完成");
 			btnButton.setOnClickListener(null);
+			//tvSpeed.setText("");
 		}
 		
 		//将文件id设为position
@@ -83,6 +81,7 @@ public class ReceiveAdapter extends CommonAdapter<FileInfo> {
 					context.startService(intent);
 					btnButton.setText("继续下载");
 					fileInfo.setStatus("继续下载");
+					//tvSpeed.setText("0kb/s");
 				}else if ("继续下载".equals(btnButton.getText().toString())) {
 					//若点击“继续下载”按钮
 					//告诉Service执行START动作，并将文件信息传过去
@@ -128,16 +127,18 @@ public class ReceiveAdapter extends CommonAdapter<FileInfo> {
 		ProgressBar pbProgress = (ProgressBar) item.findViewById(R.id.pbProgress);
 		TextView tvFileName =  (TextView) item.findViewById(R.id.tvFileName);
 		Button btnButton =  (Button) item.findViewById(R.id.btnButton);
+		//TextView tvSpeed = (TextView) item.findViewById(R.id.tvSpeed);
 		
 		pbProgress.setProgress(fileInfo.getFinished());
 		tvFileName.setText(fileInfo.getFileName());
-		
+		//tvSpeed.setText(speed+"kb/s");
 		if (fileInfo.getFinished() >= 100) {
 			btnButton.setBackgroundColor(Color.TRANSPARENT);
 			btnButton.setTextColor(Color.BLACK);
 			btnButton.setText("已完成");
 			btnButton.setOnClickListener(null);
 			listButton.add(position);
+			//tvSpeed.setText("");
 			Toast.makeText(context, "文件已保存在"+DownloadService.DOWNLOAD_PATH, Toast.LENGTH_SHORT).show();
 		}
 	}

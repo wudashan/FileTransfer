@@ -1,19 +1,16 @@
 package com.scut.filetransfer.service;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import com.scut.filetransfer.activity.PageSend;
 import com.scut.filetransfer.bean.FileInfo;
 import com.scut.filetransfer.util.AESUtil;
 import com.scut.filetransfer.util.LogUtil;
@@ -96,19 +93,12 @@ public class UploadTask {
 				dos.writeInt((int) file.length());
 				dos.flush();
 				int start = disClient.readInt();
-				int len = -1;
 				// 从指定位置开始发送数据
 				fis = new FileInputStream(filePath);
 				fis.skip((long) start);
 				dis = new DataInputStream(fis);
-				while ((len = dis.read(bufArray)) != -1) {
-//					if (socket.isClosed()) {
-//						break;
-//					}
-//					len = dis.read(bufArray);
-//					if (len == -1) {
-//						break;
-//					}
+				while ((dis.read(bufArray)) != -1) {
+
 					try {
 						//byte[] result = aesUtil.encrypt(bufArray);
 						byte[] result = bufArray;
@@ -117,23 +107,19 @@ public class UploadTask {
 						dos.writeInt(result.length);
 						dos.flush();
 						dos.write(result, 0, result.length);
+						dos.flush();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
 				//结束标志
-//				if (!socket.isClosed()) {
-//				}
-				dos.writeInt(1);
+				//dos.writeInt(1);
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
 				try {
-					// if (ss != null) {
-					// ss.close();
-					// }
 					if (socket != null) {
 						socket.close();
 					}
